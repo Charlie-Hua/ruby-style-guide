@@ -1053,7 +1053,7 @@
   # 不好
   name = 'Bozhidar' unless name
 
-  # 好 - 只有在 name 是 nil 或 false 時，設定為 Bozhidar
+  # 好 - 只有在 name 不是 nil 或 false 時，設定為 Bozhidar
   name ||= 'Bozhidar'
   ```
 
@@ -1719,7 +1719,7 @@
       end
 
       def to_s
-        "#{@first_name #@last_name"}
+        "#{@first_name} #{@last_name}"
       end
     end
     ```
