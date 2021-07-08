@@ -21,7 +21,7 @@
 
 本指南仍在進行完善中 –– 某些規則缺乏實例，某些規則沒有例子來清楚地展示它們。在完稿時，將會解決這些議題 &mdash; 現在就先把他們記在心理吧。
 
-你可以使用 [Transmuter](https://github.com/TechnoGate/transmuter) 來產生本指南的一份 PDF 或 HTML 副本。
+你可以使用 [Pandoc](http://pandoc.org/) 來產生本指南的一份 PDF 或 HTML 副本。
 
 [RuboCop](https://github.com/bbatsov/rubocop) 專案會自動檢查你的 Ruby 程式碼是否符合這份 Ruby 風格指南。目前這個專案尚有許多功能缺漏，不足以被正式地使用，歡迎有志之士協助改進。
 
@@ -29,14 +29,14 @@
 
 * [简体中文](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhCN.md)
 * [繁體中文](https://github.com/JuanitoFatas/ruby-style-guide/blob/master/README-zhTW.md)
-* [法文](https://github.com/porecreat/ruby-style-guide/blob/master/README-frFR.md)
-* [德文](https://github.com/arbox/ruby-style-guide/blob/master/README-deDE.md)
+* [阿拉伯語](https://github.com/HassanTC/ruby-style-guide/blob/master/README-EgAr.md)
+* [法文](https://github.com/gauthier-delacroix/ruby-style-guide/blob/master/README-frFR.md)
 * [日文](https://github.com/fortissimo1997/ruby-style-guide/blob/japanese/README.ja.md)
 * [韓文](https://github.com/dalzony/ruby-style-guide/blob/master/README-koKR.md)
 * [葡萄牙文](https://github.com/rubensmabueno/ruby-style-guide/blob/master/README-PT-BR.md)
 * [俄文](https://github.com/arbox/ruby-style-guide/blob/master/README-ruRU.md)
 * [西班牙文](https://github.com/alemohamad/ruby-style-guide/blob/master/README-esLA.md)
-* [越南文](https://github.com/scrum2b/ruby-style-guide/blob/master/README-viVN.md)
+* [越南文](https://github.com/CQBinh/ruby-style-guide/blob/master/README-viVN.md)
 
 ## 目錄
 
@@ -45,10 +45,13 @@
 * [命名](#命名)
 * [註解](#註解)
   * [註釋](#註釋)
+  * [魔法註解](#魔法註解)
 * [類別與模組](#類別與模組)
 * [異常](#異常)
 * [集合](#集合)
+* [數字](#數字)
 * [字串](#字串)
+* [日期與時間](#日期與時間)
 * [正規表示法](#正規表示法)
 * [百分比字面](#百分比字面)
 * [元程式設計](#元程式設計)
@@ -60,8 +63,13 @@
 > 幾乎每人都深信，每一個除了自己的風格都又醜又難讀。把 "除了自己的" 拿掉，他們或許是對的...<br>
 > -- Jerry Coffin (論縮排)
 
-* 使用 `UTF-8` 作為原始檔案的編碼。
-* 每個縮排層級使用兩個**空格**。不要使用 Hard Tabs。
+* <a name="utf-8"></a>
+  使用 `UTF-8` 作為原始檔案的編碼。
+<sup>[[link](#utf-8)]</sup>
+
+* <a name="spaces-indentation"></a>
+  每個縮排層級使用兩個**空格**。不要使用 Hard Tabs。
+<sup>[[link](#spaces-indentation)]</sup>
 
     ```Ruby
     # 不好 - 四個空格
@@ -75,14 +83,19 @@
     end
     ```
 
-* 使用 Unix 風格的行編碼 (BSD/Solaris/Linux/OSX 的使用者不用擔心，Windows 使用者要特別小心。)
-    * 如果你使用 Git ，你也許會想加入下面這個配置設定，來保護你的專案被 Windows 的行編碼侵入：
+* <a name="crlf"></a>
+  使用 Unix 風格的行編碼（BSD/Solaris/Linux/OSX 的使用者不用擔心，Windows 使用者要特別小心。）
+<sup>[[link](#crlf)]</sup>
+
+    * 如果你使用 Git，你也許會想加入下面這個設定，避免專案被 Windows 的行編碼入侵：
 
       ```bash
       $ git config --global core.autocrlf true
       ```
 
-* 不要使用 `;` 分隔敘述與表達式。 由此推論 - 一行一個表達式。
+* <a name="no-semicolon"></a>
+  不要使用 `;` 分隔敘述與表達式。 由此推論 - 一行一個表達式。
+<sup>[[link](#no-semicolon)]</sup>
 
     ```Ruby
     # 不好
@@ -99,7 +112,9 @@
     puts 'foo', 'bar' # 僅對 puts 適用
     ```
 
-* 沒有內容的類別，偏好使用單行定義。
+* <a name="single-line-classes"></a>
+  沒有內容的類別，偏好使用單行定義。
+<sup>[[link](#single-line-classes)]</sup>
 
     ```Ruby
     # 不好
@@ -113,7 +128,9 @@
     FooError = Class.new(StandardError)
     ```
 
-* 避免單行方法。 雖然這種方式蠻普遍的，但是因為有點怪異的語法，使用起來並不好用。 無論如何 - 單行方法不應該有一個以上的表達式。
+* <a name="no-single-line-methods"></a>
+  避免單行方法。 雖然這種方式蠻普遍的，但是因為有點怪異的語法，使用起來並不好用。 無論如何 - 單行方法不應該有一個以上的表達式。
+<sup>[[link](#no-single-line-methods)]</sup>
 
     ```Ruby
     # 不好
@@ -141,16 +158,18 @@
     def no_op; end
     ```
 
-* 使用空格來圍繞運算元，逗點 `,` 、冒號 `:` 及分號 `;` 之後，圍繞 `{` 和 `}` 之前。
+* <a name="spaces-operators"></a>
+  使用空格來圍繞運算元，逗點 `,` 、冒號 `:` 及分號 `;` 之後，圍繞 `{` 和 `}` 之前。
   空格可能對（大部分）Ruby 直譯器來說是無關緊要的，但正確的使用是寫出可讀性高的程式碼的關鍵。
+<sup>[[link](#spaces-operators)]</sup>
 
     ```Ruby
     sum = 1 + 2
     a, b = 1, 2
-    [1, 2, 3].each { |e| puts e }
     class FooError < StandardError; end
     ```
-    （針對運算子）唯一的例外是當使用指數運算子時：
+
+    有幾個例外狀況，其中一個是使用指數運算子時：
 
     ```Ruby
     # 不好
@@ -160,7 +179,47 @@
     e = M * c**2
     ```
 
-    由於 `{` 與 `}` 被用在區塊與雜湊的語法，以及嵌入字串的表達式裡，應該要被更清晰的表達。對於雜湊的語法，可以接受下列兩種撰寫方式。
+    另一個例外是在有理數中的分線（slash）：
+
+    ```ruby
+    # 不好
+    o_scale = 1 / 48r
+
+    # 好
+    o_scale = 1/48r
+    ```
+
+    最後一個例外狀況則是安全運算子（safe navigation operator）：
+
+    ```ruby
+    # 不好
+    foo &. bar
+    foo &.bar
+    foo&. bar
+
+    # 好
+    foo&.bar
+    ```
+
+* <a name="spaces-braces"></a>
+  不要有空格在 `(` 、 `[` 之後，或 `]` 、 `)` 之前。
+  在 `{` 、 `}` 的前後加上空格。
+<sup>[[link](#spaces-braces)]</sup>
+
+    ```ruby
+    # bad
+    some( arg ).other
+    [ 1, 2, 3 ].each{|e| puts e}
+
+    # good
+    some(arg).other
+    [1, 2, 3].each { |e| puts e }
+    ```
+
+    由於 `{` 與 `}` 被用在區塊與雜湊的語法，以及嵌入字串的表達式裡，應該要被更清晰的表達。
+
+    對於雜湊的語法，可以接受下列兩種撰寫方式。
+    第一種寫法稍微容易閱讀（一般來說在 Ruby 社群裡也較為普及）。第二種寫法的優點是能夠在視覺上區分區塊與雜湊字面語法。不管你選擇哪一種方式——持續使用它。
 
     ```Ruby
     # 好 - 在 { 之後與 } 之前加上空格
@@ -170,28 +229,19 @@
     {one: 1, two: 2}
     ```
 
-    第一種寫法稍微容易閱讀（一般來說在Ruby社群裡也較為普及）。第二種寫法的優點是能夠在視覺上區分區塊與雜湊字面語法。不管你選擇哪一種方式 - 持續使用它。
-
-    至於嵌入的表達式，一樣有兩種可行的選擇：
+    至於嵌入的表達式則不在大括號中加入空格。
 
     ```Ruby
-    # 好 - 沒有空格
-    "string#{expr}"
+    # 不好
+    "From: #{ user.first_name }, #{ user.last_name }"
 
-    # ok - 也許比較好閱讀
-    "string#{ expr }"
+    # 好
+    "From: #{user.first_name}, #{user.last_name}"
     ```
 
-    第一種風格非常普遍，原則上建議你持續使用它。第二種風格稍微容易閱讀（可議）。與雜湊一樣 - 選擇其中一種風格並持續使用。
-
-* 不要有空格在 `(` 、 `[` 之後，或 `]` 、 `)` 之前。
-
-    ```Ruby
-    some(arg).other
-    [1, 2, 3].size
-    ```
-
-* 不要有空格在 `!` 之後.
+* <a name="no-space-bang"></a>
+  不要有空格在 `!` 之後.
+<sup>[[link](#no-space-bang)]</sup>
 
   ```Ruby
   # 不好
@@ -201,7 +251,9 @@
   !something
   ```
 
-* 範圍的字面語法中不要有空格
+* <a name="no-space-inside-range-literals"></a>
+  範圍的字面語法中不要有空格
+<sup>[[link](#no-space-inside-range-literals)]</sup>
 
   ```Ruby
   # 不好
@@ -213,7 +265,9 @@
   'a'...'z'
   ```
 
-* 把 `when` 跟 `case` 縮排在同一層。我知道很多人不同意這一點，但這是 "The Ruby Programming Language" 及 "Programming Ruby" 所設立的風格。
+* <a name="indent-when-to-case"></a>
+  把 `when` 跟 `case` 縮排在同一層。我知道很多人不同意這一點，但這是 "The Ruby Programming Language" 及 "Programming Ruby" 所設立的風格。
+<sup>[[link](#indent-when-to-case)]</sup>
 
     ```Ruby
     # 不好
@@ -240,7 +294,10 @@
       song.play
     end
     ```
-* 當條件表達式的結果被賦值給一個變數時，保持分支的對齊。
+* <a name="indent-conditional-assignment"></a>
+  當條件表達式的結果被賦值給一個變數時，保持分支的對齊。
+<sup>[[link](#indent-conditional-assignment)]</sup>
+
 
     ```Ruby
     # 不好 - 非常複雜
@@ -294,7 +351,9 @@
       end
     ```
 
-* 在 `def` 之間使用空行，並且把方法分成合乎邏輯的段落。
+* <a name="empty-lines-between-methods"></a>
+  在 `def` 之間使用空行，並且把方法分成合乎邏輯的段落。
+<sup>[[link](#empty-lines-between-methods)]</sup>
 
     ```Ruby
     def some_method
@@ -310,15 +369,99 @@
     end
     ```
 
-* 避免在方法最後一個參數之後加逗號，尤其是參數沒有分佈在不同行的時候。
+* <a name="two-or-more-empty-lines"></a>
+  不要在同一處中使用多個空行。
+<sup>[[link](#two-or-more-empty-lines)]</sup>
+
+  ```Ruby
+  # 不好 - 兩個空行
+  some_method
+
+
+  some_method
+
+  # 好
+  some_method
+
+  some_method
+  ```
+
+* <a name="empty-lines-around-access-modifier"></a>
+  使用空行圍繞存取修飾符（Access modifier）。
+<sup>[[link](#empty-lines-around-access-modifier)]</sup>
+
+  ```Ruby
+  # 不好
+  class Foo
+    attr_reader :foo
+    def foo
+      # do something...
+    end
+  end
+
+  # 好
+  class Foo
+    attr_reader :foo
+
+    def foo
+      # do something...
+    end
+  end
+  ```
+
+* <a name="empty-lines-around-bodies"></a>
+  不要用空行圍繞方法、類別、模組、程式碼區塊。
+<sup>[[link](#empty-lines-around-bodies)]</sup>
+
+  ```Ruby
+  # 不好
+  class Foo
+
+    def foo
+
+      begin
+
+        do_something do
+
+          something
+
+        end
+
+      rescue
+
+        something
+
+      end
+
+    end
+
+  end
+
+  # 好
+  class Foo
+    def foo
+      begin
+        do_something do
+          something
+        end
+      rescue
+        something
+      end
+    end
+  end
+  ```
+
+* <a name="no-trailing-params-comma"></a>
+  避免在方法最後一個參數之後加逗號，尤其是參數沒有分佈在不同行的時候。
+<sup>[[link](#no-trailing-params-comma)]</sup>
 
   ```Ruby
   # 不好 - 比較容易移動/新增/移除參數，但還是不偏好這種做法
   some_method(
-               size,
-               count,
-               color,
-             )
+    size,
+    count,
+    color,
+  )
 
   # 不好
   some_method(size, count, color, )
@@ -327,7 +470,9 @@
   some_method(size, count, color)
   ```
 
-* 當賦予預設值給方法參數時，使用空格圍繞 `=` 運算元：
+* <a name="spaces-around-equals"></a>
+  當賦予預設值給方法參數時，使用空格圍繞 `=` 運算元：
+<sup>[[link](#spaces-around-equals)]</sup>
 
     ```Ruby
     # 不好
@@ -343,7 +488,9 @@
 
     雖然幾本Ruby的書籍建議第一種風格，不過第二種風格在實務上更為常見（並應該會較容易閱讀）。
 
-* 避免在不需要的時候使用續行 `\`。在實務上，除了字串的連接，避免使用續行在任何地方。
+* <a name="no-trailing-backslash"></a>
+  避免在不需要的時候使用續行 `\`。在實務上，除了字串的連接，避免使用續行在任何地方。
+<sup>[[link](#no-trailing-backslash)]</sup>
 
     ```Ruby
     # 不好
@@ -358,7 +505,9 @@
                 ' and second part of the long string'
     ```
 
-* 採用一貫的多行方法鏈結風格。在Ruby社群中有兩種普遍的風格，兩種都被認為是好的寫法 - 前置 `.`（選項 A） 與後置 `.` （選項 B）。
+* <a name="consistent-multi-line-chains"></a>
+  採用一貫的多行方法鏈結風格。在Ruby社群中有兩種普遍的風格，兩種都被認為是好的寫法 - 前置 `.`（選項 A） 與後置 `.` （選項 B）。
+<sup>[[link](#consistent-multi-line-chains)]</sup>
 
   * **（選項 A）** 當另一行繼續調用鏈結式方法時，把 `.` 放在第二行。
 
@@ -386,7 +535,9 @@
 
   關於這兩種可供替換的寫法，可以在[這裡](https://github.com/bbatsov/ruby-style-guide/pull/176)找到討論。
 
-* 如果一個方法呼叫的參數擴展超過一行時，排列它們。當排列參數超過行寬限制，也可以讓第二行只縮排一層。
+* <a name="no-double-indent"></a>
+  如果一個方法呼叫的參數擴展超過一行時，排列它們。當排列參數超過行寬限制，也可以讓第二行只縮排一層。
+<sup>[[link](#no-double-indent)]</sup>
 
     ```Ruby
     # 一開始 (一行太長)
@@ -422,7 +573,9 @@
     end
     ```
 
-* 跨越多行來排列陣列的元素。
+* <a name="align-multiline-arrays"></a>
+  跨越多行來排列陣列的元素。
+<sup>[[link](#align-multiline-arrays)]</sup>
 
   ```Ruby
   # 不好 - 單層縮排
@@ -441,7 +594,9 @@
      'Baked beans', 'Spam', 'Spam', 'Spam', 'Spam', 'Spam']
   ```
 
-* 在語法中加入底線來改進大數值的可讀性。
+* <a name="underscores-in-numerics"></a>
+  在語法中加入底線來改進大數值的可讀性。
+<sup>[[link](#underscores-in-numerics)]</sup>
 
     ```Ruby
     # 差勁 - 到底是有幾個零？
@@ -451,13 +606,47 @@
     num = 1_000_000
     ```
 
-* 使用 RDoc 以及它的慣例來撰寫 API 文件。不要在註解區塊及 `def` 之前放一個空行。
+* <a name="numeric-literal-prefixes"></a>
+  使用數值前綴時偏好使用小寫字母。
+  `0o` 用於八進位數、`0x` 用於十六進位數和 `0b` 用於二進位數。
+  不要使用 `0d` 前綴表示十進位數。
+<sup>[[link](#numeric-literal-prefixes)]</sup>
 
-* 將每一行限制在最多 80 個字元。
+  ```ruby
+  # 不好
+  num = 01234
+  num = 0O1234
+  num = 0X12AB
+  num = 0B10101
+  num = 0D1234
+  num = 0d1234
 
-* 避免尾隨的空白（trailing whitesapce）。
+  # 好 - 容易從前綴區分出數字
+  num = 0o1234
+  num = 0x12AB
+  num = 0b10101
+  num = 1234
+  ```
 
-* 不要使用區塊註解，它們不能夠在開頭置入空白，而且無法像一般的註解一樣容易的被辨識出來。
+* <a name="rdoc-conventions"></a>
+  使用 [RDoc](http://rdoc.sourceforge.net/doc/) 以及它的慣例來撰寫 API 文件。不要在註解區塊及 `def` 之前放一個空行。
+<sup>[[link](#rdoc-conventions)]</sup>
+
+* <a name="80-character-limits"></a>
+  將每一行限制在最多 80 個字元。
+<sup>[[link](#80-character-limits)]</sup>
+
+* <a name="no-trailing-whitespace"></a>
+  避免尾隨的空白（trailing whitesapce）。
+<sup>[[link](#no-trailing-whitespace)]</sup>
+
+* <a name="newline-eof"></a>
+  每個檔案的最後以空行做結尾。
+<sup>[[link](#newline-eof)]</sup>
+
+* <a name="no-block-comments"></a>
+  不要使用區塊註解，它們不能夠在開頭置入空白，而且無法像一般的註解一樣容易的被辨識出來。
+<sup>[[link](#no-block-comments)]</sup>
 
     ```Ruby
     # 不好
@@ -473,7 +662,9 @@
 
 ## 語法
 
-* 只使用 `::` 去參照常數（這包括類別與模組）與建構式（像是 `Array()` 或 `Nokogiri::HTML()` ）。不要使用 `::` 作為一般的方法調用。
+* <a name="double-colons"></a>
+  只使用 `::` 去參照常數（這包括類別與模組）與建構式（像是 `Array()` 或 `Nokogiri::HTML()` ）。不要使用 `::` 作為一般的方法調用。
+<sup>[[link](#double-colons)]</sup>
 
     ```Ruby
     # 不好
@@ -487,7 +678,27 @@
     SomeModule::SomeClass()
     ```
 
-* 使用 `def` 時，當有參數時使用括號。當方法不接受任何參數時，省略括號。
+* <a name="colon-method-definition"></a>
+  別使用 `::` 來定義類別方法。
+<sup>[[link](#colon-method-definition)]</sup>
+
+  ```ruby
+  # 不好
+  class Foo
+    def self::some_method
+    end
+  end
+
+  # 好
+  class Foo
+    def self.some_method
+    end
+  end
+  ```
+
+* <a name="method-parens"></a>
+  使用 `def` 時，當有參數時使用括號。當方法不接受任何參數時，省略括號。
+<sup>[[link](#method-parens)]</sup>
 
      ```Ruby
      # 不好
@@ -511,7 +722,176 @@
      end
      ```
 
-* 永遠不要使用 `for` ，除非你很清楚為什麼。大部分情況應該使用迭代器來取代。`for` 是由 `each` 所實作的（所以你加入了一層的迂迴），但出乎意料的是 — `for` 並沒有包含一個新的視野 (不像是 `each`）而在這個區塊中定義的變數將會被外部所看到。
+* <a name="method-invocation-parens"></a>
+  在調用方法時在參數的外圍加上括號，特別是第一個參數是以左括號開頭，如 `(` 在 `f((3 + 2) + 1)`裡。
+<sup>[[link](#method-invocation-parens)]</sup>
+
+  ```ruby
+  # 不好
+  x = Math.sin y
+  # 好
+  x = Math.sin(y)
+
+  # 不好
+  array.delete e
+  # 好
+  array.delete(e)
+
+  # 不好
+  temperance = Person.new 'Temperance', 30
+  # 好
+  temperance = Person.new('Temperance', 30)
+  ```
+
+  在以下的情況下盡量移除括號
+
+  * 不帶參數的呼叫方法：
+
+    ```ruby
+    # 不好
+    Kernel.exit!()
+    2.even?()
+    fork()
+    'test'.upcase()
+
+    # 好
+    Kernel.exit!
+    2.even?
+    fork
+    'test'.upcase
+    ```
+
+  * 方法是內部領域特定語言（internal DSL）的一部分（如： Rake, Rails, RSpec）：
+
+    ```ruby
+    # 不好
+    validates(:name, presence: true)
+    # 好
+    validates :name, presence: true
+    ```
+
+  * 在 Ruby 中有 Methods 狀態的方法：
+
+    ```ruby
+    class Person
+      # 不好
+      attr_reader(:name, :age)
+      # 好
+      attr_reader :name, :age
+
+      # body omitted
+    end
+    ```
+
+  在以下的情況下可以移除括號
+
+  * Methods that have "keyword" status in Ruby, but are not declarative:
+
+    ```Ruby
+    # 好
+    puts(temperance.age)
+    system('ls')
+    # 也很好
+    puts temperance.age
+    system 'ls'
+    ```
+
+* <a name="optional-arguments"></a>
+    將可選參數定義於參數排列的末端。
+    Ruby 在呼叫可選參數放在前面的方法時會出現一些無法預期的結果。
+<sup>[[link](#optional-arguments)]</sup>
+
+  ```Ruby
+  # 不好
+  def some_method(a = 1, b = 2, c, d)
+    puts "#{a}, #{b}, #{c}, #{d}"
+  end
+
+  some_method('w', 'x') # => '1, 2, w, x'
+  some_method('w', 'x', 'y') # => 'w, 2, x, y'
+  some_method('w', 'x', 'y', 'z') # => 'w, x, y, z'
+
+  # 好
+  def some_method(c, d, a = 1, b = 2)
+    puts "#{a}, #{b}, #{c}, #{d}"
+  end
+
+  some_method('w', 'x') # => '1, 2, w, x'
+  some_method('w', 'x', 'y') # => 'y, 2, w, x'
+  some_method('w', 'x', 'y', 'z') # => 'y, z, w, x'
+  ```
+
+* <a name="parallel-assignment"></a>
+    在定義變數時避免使用平行賦值（parallel assignment）。
+    平行賦值僅能用於呼叫方法時的回傳值、與 * 星號運算符（splat operator）共同使用、或者是用於交換變數賦值。
+    平行賦值的可讀性是低於分開賦值的。
+<sup>[[link](#parallel-assignment)]</sup>
+
+  ```Ruby
+  # 不好
+  a, b, c, d = 'foo', 'bar', 'baz', 'foobar'
+
+  # 好
+  a = 'foo'
+  b = 'bar'
+  c = 'baz'
+  d = 'foobar'
+
+  # 好 - 交換變數賦值
+  # 交換變數賦值是一個特殊的例子，因為他允許你交換各個已經賦予給變數的值。
+  a = 'foo'
+  b = 'bar'
+
+  a, b = b, a
+  puts a # => 'bar'
+  puts b # => 'foo'
+
+  # 好 - 方法回傳
+  def multi_return
+    [1, 2]
+  end
+
+  first, second = multi_return
+
+  # 好 - 與 * 運算符一起使用
+  first, *list = [1, 2, 3, 4] # first => 1, list => [2, 3, 4]
+
+  hello_array = *'Hello' # => ["Hello"]
+
+  a = *(1..3) # => [1, 2, 3]
+  ```
+
+* <a name="trailing-underscore-variables"></a>
+  避免在平行賦值時使用不必要的尾隨底線變數，比起單純使用底線變數，為底線變數命名更好，能夠提供更多的資訊。
+  如果在左側的賦值有定義 * 星號變數（splat variable），且星號變數非底線變數時，尾隨底線變數是必要的。
+<sup>[[link]](#trailing-underscore-variables)</sup>
+
+  ```Ruby
+  # 不好
+  foo = 'one,two,three,four,five'
+  # 不必要的賦值並沒有提供有用的資訊
+  first, second, _ = foo.split(',')
+  first, _, _ = foo.split(',')
+  first, *_ = foo.split(',')
+
+
+  # 好
+  foo = 'one,two,three,four,five'
+  # 必要的底線在此明確指出你需要除了最後一個元素以外的所有元素
+  *beginning, _ = foo.split(',')
+  *beginning, something, _ = foo.split(',')
+
+  a, = foo.split(',')
+  a, b, = foo.split(',')
+  # 不必要的賦值給予未使用的變數，但賦值提供了我們有用的資訊
+  first, _second = foo.split(',')
+  first, _second, = foo.split(',')
+  first, *_ending = foo.split(',')
+  ```
+
+* <a name="no-for-loops"></a>
+  永遠不要使用 `for` ，除非你很清楚為什麼。大部分情況應該使用迭代器來取代。`for` 是由 `each` 所實作的（所以你加入了一層的迂迴），但出乎意料的是 — `for` 並沒有包含一個新的視野 (不像是 `each`）而在這個區塊中定義的變數將會被外部所看到。
+<sup>[[link](#no-for-loops)]</sup>
 
     ```Ruby
     arr = [1, 2, 3]
@@ -531,7 +911,9 @@
     elem # => NameError: undefined local variable or method `elem'
     ```
 
-* 永遠不要在多行的 `if/unless` 使用 `then`
+* <a name="no-then"></a>
+  永遠不要在多行的 `if/unless` 使用 `then`
+<sup>[[link](#no-then)]</sup>
 
     ```Ruby
     # 不好
@@ -545,7 +927,9 @@
     end
     ```
 
-* 在多行的條件判斷區域中，永遠將條件式與 `if`/`unless` 放在同一行。
+* <a name="same-line-condition"></a>
+  在多行的條件判斷區域中，永遠將條件式與 `if`/`unless` 放在同一行。
+<sup>[[link](#same-line-condition)]</sup>
 
   ```Ruby
   # 不好
@@ -562,8 +946,10 @@
   end
   ```
 
-* 偏愛三元運算元 `? : ` 勝於 `if/then/else/end` 結構
-* 它更為常見及更精準。
+* <a name="ternary-operator"></a>
+  偏愛三元運算元 `? : ` 勝於 `if/then/else/end` 結構。它更為常見及更精準。
+<sup>[[link](#ternary-operator)]</sup>
+
 
     ```Ruby
     # 不好
@@ -572,7 +958,9 @@
     # 好
     result = some_condition ? something : something_else
     ```
-* 使用一個表達式給一個三元運算元的分支。這也意味著三元運算符不要寫成巢狀式。巢狀情況使用 `if/else` 結構。
+* <a name="no-nested-ternary"></a>
+  使用一個表達式給一個三元運算元的分支。這也意味著三元運算符不要寫成巢狀式。巢狀情況使用 `if/else` 結構。
+<sup>[[link](#no-nested-ternary)]</sup>
 
     ```Ruby
     # 不好
@@ -585,17 +973,21 @@
       something_else
     end
     ```
-* 永遠不要使用 `if x; ...`。使用三元運算元來取代。
+* <a name="no-semicolon-ifs"></a>
+  永遠不要使用 `if x; ...`。使用三元運算元來取代。
+<sup>[[link](#no-semicolon-ifs)]</sup>
 
     ```Ruby
     # 不好
-    result = if some_condition: something else something_else end
+    result = if some_condition; something else something_else end
 
     # 好
     result = some_condition ? something : something_else
     ```
 
-* 充分利用 `if` 與 `case` 會回傳結果的特性
+* <a name="use-if-case-returns"></a>
+  充分利用 `if` 與 `case` 會回傳結果的特性
+<sup>[[link](#use-if-case-returns)]</sup>
 
   ```Ruby
   # 不好
@@ -614,11 +1006,17 @@
     end
   ```
 
-* 一行的情況使用 `when x then ...` 。替代方案的語法 `when x: ...` 已經在 Ruby 1.9 被移除了。
+* <a name="one-line-cases"></a>
+  一行的情況使用 `when x then ...` 。替代方案的語法 `when x: ...` 已經在 Ruby 1.9 被移除了。
+<sup>[[link](#one-line-cases)]</sup>
 
-* 永遠不要使用 `when x; ...` 。參考前一個規則。
+* <a name="no-when-semicolons"></a>
+  永遠不要使用 `when x; ...` 。參考前一個規則。
+<sup>[[link](#no-when-semicolons)]</sup>
 
-* 使用 `!` 而不是 `not`.
+* <a name="bang-not-not"></a>
+  使用 `!` 而不是 `not`.
+<sup>[[link](#bang-not-not)]</sup>
 
     ```Ruby
     # 差 - 因為運算子有優先序，需要用括號。
@@ -628,7 +1026,12 @@
     x = !something
     ```
 
-* 避免使用 `!!`。
+* <a name="no-bang-bang"></a>
+  避免使用 `!!`。
+<sup>[[link](#no-bang-bang)]</sup>
+
+  `!!` 會將數值轉換為布林值，但在流程控制上你不需要使用它，他只會混淆你的意圖。
+  如果你需要檢查 `nil` 值，請使用 `nil?` 檢查。
 
   ```Ruby
   # 不好
@@ -638,18 +1041,16 @@
     # 省略主體
   end
 
-  x = false
-  # 雙重否定對布林值來說是不必要的
-  !!x # => false
-
   # 好
   x = 'test'
-  unless x.nil?
+  if x
     # 省略主體
   end
   ```
 
-* 禁止使用 `and` 與 `or`。這麼做不值得。永遠使用 `&&` 與 `||` 取代。
+* <a name="no-and-or-or"></a>
+  禁止使用 `and` 與 `or`。這麼做不值得。永遠使用 `&&` 與 `||` 取代。
+<sup>[[link](#no-and-or-or)]</sup>
 
   ```Ruby
   # 不好
@@ -671,9 +1072,13 @@
   document.saved? || document.save!
   ```
 
-* 避免多行的 `? : `（三元運算元）；使用 `if/unless` 來取代。
+* <a name="no-multiline-ternary"></a>
+  避免多行的 `? : `（三元運算元）；使用 `if/unless` 來取代。
+<sup>[[link](#no-multiline-ternary)]</sup>
 
-* 當你有單行的主體時，偏愛 `if/unless` 修飾符。另一個好的方法是使用控制流程的 `and/or` 。
+* <a name="if-as-a-modifier"></a>
+  當你有單行的主體時，偏愛 `if/unless` 修飾符。另一個好的方法是使用控制流程的 `and/or` 。
+<sup>[[link](#if-as-a-modifier)]</sup>
 
     ```Ruby
     # 不好
@@ -688,7 +1093,9 @@
     some_condition && do_something
     ```
 
-* 多行的複雜區塊避免使用 `if/unless` 修飾符。
+* <a name="no-multiline-if-modifiers"></a>
+  多行的複雜區塊避免使用 `if/unless` 修飾符。
+<sup>[[link](#no-multiline-if-modifiers)]</sup>
 
   ```Ruby
   # 不好
@@ -704,7 +1111,21 @@
   end
   ```
 
-* 否定條件偏愛 `unless` 優於 `if` （或是控制流程 `||`）。
+* <a name="no-nested-modifiers"></a>
+  避免巢狀使用 `if`/`unless`/`while`/`until` 修飾符，如果 `&&`/`||` 合適的話是更好的選擇。
+<sup>[[link](#no-nested-modifiers)]</sup>
+
+  ```Ruby
+  # 不好
+  do_something if other_condition if some_condition
+
+  # 好
+  do_something if some_condition && other_condition
+  ```
+
+* <a name="unless-for-negatives"></a>
+  否定條件偏愛 `unless` 優於 `if` （或是控制流程 `||`）。
+<sup>[[link](#unless-for-negatives)]</sup>
 
     ```Ruby
     # 不好
@@ -717,9 +1138,11 @@
     do_something unless some_condition
 
     # 另一個好方法
-    some_condition or do_something
+    some_condition || do_something
     ```
-* 永遠不要使用 `unless` 搭配 `else`。 將它們改寫成肯定條件。
+* <a name="no-else-with-unless"></a>
+  永遠不要使用 `unless` 搭配 `else`。 將它們改寫成肯定條件。
+<sup>[[link](#no-else-with-unless)]</sup>
 
     ```Ruby
     # 不好
@@ -736,7 +1159,9 @@
       puts 'failure'
     end
     ```
-* 不要使用括號圍繞 `if/unless/while` 的條件式，除非這條件包含了一個賦值（見下面使用 `=` （一個賦值）的回傳值）。
+* <a name="no-parens-if"></a>
+  不要使用括號圍繞 `if/unless/while` 的條件式，除非這條件包含了一個賦值（見下面使用 `=` （一個賦值）的回傳值）。
+<sup>[[link](#no-parens-if)]</sup>
 
     ```Ruby
     # 不好
@@ -752,7 +1177,9 @@
 
 注意這項規則有個例外，[條件式中的安全賦值](#safe-assignment-in-condition)。
 
-* 多行的 `while/until` 不要使用 `while/until condition do`。
+* <a name="no-multiline-while-do"></a>
+  多行的 `while/until` 不要使用 `while/until condition do`。
+<sup>[[link](#no-multiline-while-do)]</sup>
 
   ```Ruby
   # 不好
@@ -774,7 +1201,9 @@
   end
   ```
 
-* 當你有一個單行的主體時，偏愛使用 `while/until` 修飾子。
+* <a name="while-as-a-modifier"></a>
+  當你有一個單行的主體時，偏愛使用 `while/until` 修飾子。
+<sup>[[link](#while-as-a-modifier)]</sup>
 
     ```Ruby
     # 不好
@@ -786,7 +1215,9 @@
     do_something while some_condition
     ```
 
-* 負面條件偏愛 `until` 勝於 `while`。
+* <a name="until-for-negatives"></a>
+  負面條件偏愛 `until` 勝於 `while`。
+<sup>[[link](#until-for-negatives)]</sup>
 
     ```Ruby
     # 不好
@@ -796,7 +1227,9 @@
     do_something until some_condition
     ```
 
-* 當你需要使用 `Kernel#loop` 代替 `while/until`。
+* <a name="infinite-loop"></a>
+  當你需要使用 `Kernel#loop` 代替 `while/until`。
+<sup>[[link](#infinite-loop)]</sup>
 
     ```ruby
     # 不好
@@ -814,8 +1247,10 @@
     end
     ```
 
-* 迴圈後測試使用 `Kernel#loop` 搭配 `break`，而不是 `begin/end/until` 或
+* <a name="loop-with-break"></a>
+  迴圈後測試使用 `Kernel#loop` 搭配 `break`，而不是 `begin/end/until` 或
   `begin/end/while`。
+<sup>[[link](#loop-with-break)]</sup>
 
   ```Ruby
   # 不好
@@ -832,27 +1267,9 @@
   end
   ```
 
-* 忽略圍繞方法參數的括號，如內部 DSL (如：Rake, Rails, RSpec)，Ruby 中帶有 "關鍵字" 狀態的方法（如：`attr_reader`, `puts`）以及屬性存取方法。所有其他的方法呼叫，使用括號圍繞參數。
-
-    ```Ruby
-    class Person
-      attr_reader :name, :age
-
-      # 忽略
-    end
-
-    temperance = Person.new('Temperance', 30)
-    temperance.name
-
-    puts temperance.age
-
-    x = Math.sin(y)
-    array.delete(e)
-
-    bowling.score.should == 0
-    ```
-
-* 省略圍繞在隱式選項雜湊外圍的花括號。
+* <a name="no-braces-opts-hash"></a>
+  省略圍繞在隱式選項雜湊外圍的花括號。
+<sup>[[link](#no-braces-opts-hash)]</sup>
 
   ```Ruby
   # 不好
@@ -862,7 +1279,9 @@
   user.set(name: 'John', age: 45, permissions: { read: true })
   ```
 
-* 方法屬於內部DSL時，同時省略外圍的花括號與圓括號。
+* <a name="no-dsl-decorating"></a>
+  方法屬於內部DSL時，同時省略外圍的花括號與圓括號。
+<sup>[[link](#no-dsl-decorating)]</sup>
 
   ```Ruby
   class Person < ActiveRecord::Base
@@ -874,26 +1293,24 @@
   end
   ```
 
-* 方法呼叫不包含參數時，省略圓括號。
+* <a name="single-action-blocks"></a>
+  當調用函數為區塊中的唯一操作時，使用 proc 簡單表示。
+<sup>[[link](#single-action-blocks)]</sup>
 
   ```Ruby
   # 不好
-  Kernel.exit!()
-  2.even?()
-  fork()
-  'test'.upcase()
+  names.map { |name| name.upcase }
 
   # 好
-  Kernel.exit!
-  2.even?
-  fork
-  'test'.upcase
+  names.map(&:upcase)
   ```
 
-* 單行區塊喜好 `{...}` 勝於 `do..end`。多行區塊避免使用 `{...}`（多行串連總是醜陋）。在 `do...end` 、 "控制流程" 及"方法定義"，永遠使用 `do...end` （如 Rakefile 及某些 DSL）。串連時避免使用 `do...end`。
+* <a name="single-line-blocks"></a>
+  單行區塊喜好 `{...}` 勝於 `do..end`。多行區塊避免使用 `{...}`（多行串連總是醜陋）。在 `do...end` 、 "控制流程" 及"方法定義"，永遠使用 `do...end` （如 Rakefile 及某些 DSL）。串連時避免使用 `do...end`。
+<sup>[[link](#single-line-blocks)]</sup>
 
     ```Ruby
-    names = ['Bozhidar', 'Steve', 'Sarah']
+    names = %w[Bozhidar Steve Sarah]
 
     # 不好
     names.each do |name|
@@ -913,7 +1330,9 @@
     ```
     某些人會爭論多行串連時，使用`{...}`看起來還可以，但他們應該捫心自問 — 這樣程式碼真的可讀嗎？難道不能把區塊內容取出來放到絕妙的方法裡嗎？
 
-* 考慮使用明確的區塊參數，避免只為了傳遞參數到另一個區塊而使用區塊語法。注意區塊轉換成 Proc 所造成的效能影響。
+* <a name="block-argument"></a>
+  考慮使用明確的區塊參數，避免只為了傳遞參數到另一個區塊而使用區塊語法。注意區塊轉換成 Proc 所造成的效能影響。
+<sup>[[link](#block-argument)]</sup>
 
   ```Ruby
   require 'tempfile'
@@ -937,7 +1356,9 @@
   end
   ```
 
-* 避免在不需要控制流程的場合時使用 `return` 。
+* <a name="no-explicit-return"></a>
+  避免在不需要控制流程的場合時使用 `return` 。
+<sup>[[link](#no-explicit-return)]</sup>
 
     ```Ruby
     # 不好
@@ -951,7 +1372,9 @@
     end
     ```
 
-* 避免在不需要的情況使用 `self` 。（只有在呼叫一個 self write 存取器時會需要用到。）
+* <a name="no-self-unless-required"></a>
+  避免在不需要的情況使用 `self` 。（只有在呼叫一個 self write 存取器時會需要用到。）
+<sup>[[link](#no-self-unless-required)]</sup>
 
     ```Ruby
     # 不好
@@ -973,7 +1396,9 @@
     end
     ```
 
-* 避免使用帶有區域變數的 shadowing 方法，除非它們彼此相等。
+* <a name="no-shadowing"></a>
+  避免使用帶有區域變數的 shadowing 方法，除非它們彼此相等。
+<sup>[[link](#no-shadowing)]</sup>
 
     ```Ruby
     class Foo
@@ -1001,7 +1426,9 @@
     end
     ```
 
-* 不要在條件表達式中使用 `=`（賦值）回傳值，除非賦值被包在圓括號中。 這樣的做法在Ruby開發者（Rubyists）中被廣泛稱之為*條件式中的安全賦值（safe assignment in condition）*。
+* <a name="safe-assignment-in-condition"></a>
+  不要在條件表達式中使用 `=`（賦值）回傳值，除非賦值被包在圓括號中。 這樣的做法在Ruby開發者（Rubyists）中被廣泛稱之為*條件式中的安全賦值（safe assignment in condition）*。
+<sup>[[link](#safe-assignment-in-condition)]</sup>
 
   ```Ruby
   # 不好 (＋ 會出現警告)
@@ -1024,7 +1451,9 @@
   end
   ```
 
-* 盡量使用自我賦值的簡寫寫運算元。
+* <a name="self-assignment"></a>
+  盡量使用自我賦值的簡寫寫運算元。
+<sup>[[link](#self-assignment)]</sup>
 
   ```Ruby
   # 不好
@@ -1044,7 +1473,9 @@
   x &&= y
   ```
 
-* 只有在變數尚未被初始化時，使用 `||=` 初始化變數。
+* <a name="double-pipe-for-uninit"></a>
+  只有在變數尚未被初始化時，使用 `||=` 初始化變數。
+<sup>[[link](#double-pipe-for-uninit)]</sup>
 
   ```Ruby
   # 不好
@@ -1053,11 +1484,13 @@
   # 不好
   name = 'Bozhidar' unless name
 
-  # 好 - 只有在 name 不是 nil 或 false 時，設定為 Bozhidar
+  # 好 - 只有在 name 是 nil 或 false 時，設定為 Bozhidar
   name ||= 'Bozhidar'
   ```
 
-* 不要使用 `||=` 來初始化布林變數。（想看看如果現在的值剛好是 `false` 時會發生什麼。）
+* <a name="no-double-pipes-for-bools"></a>
+  不要使用 `||=` 來初始化布林變數。（想看看如果現在的值剛好是 `false` 時會發生什麼。）
+<sup>[[link](#no-double-pipes-for-bools)]</sup>
 
     ```Ruby
     # 不好 — 會把 enabled 設成真，即便它本來是假。
@@ -1067,7 +1500,9 @@
     enabled = true if enabled.nil?
     ```
 
-* 使用 `&&=` 預先處理變數是否存在。 `&&=` 只會更改已經存在的變數，所以能夠移除使用 `if` 確認變數是否存在。
+* <a name="double-amper-preprocess"></a>
+  使用 `&&=` 預先處理變數是否存在。 `&&=` 只會更改已經存在的變數，所以能夠移除使用 `if` 確認變數是否存在。
+<sup>[[link](#double-amper-preprocess)]</sup>
 
   ```Ruby
   # 不好
@@ -1088,7 +1523,9 @@
   something &&= something.downcase
   ```
 
-* 避免直接使用型態相等運算元（case equality operator） `===`。它的名字暗示它絕對該被用在 `case` 表達式，不在此情形內則會產生一些令人困惑的程式碼。
+* <a name="no-case-equality"></a>
+  避免直接使用型態相等運算元（case equality operator） `===`。它的名字暗示它絕對該被用在 `case` 表達式，不在此情形內則會產生一些令人困惑的程式碼。
+<sup>[[link](#no-case-equality)]</sup>
 
   ```Ruby
   # 不好
@@ -1102,7 +1539,9 @@
   some_string =~ /something/
   ```
 
-* 可以使用 `==` 則不要使用 `eql?`。實務中很少需要 `eql?` 所提供的嚴格比較。
+* <a name="eql"></a>
+  可以使用 `==` 則不要使用 `eql?`。實務中很少需要 `eql?` 所提供的嚴格比較。
+<sup>[[link](#eql)]</sup>
 
   ```Ruby
   # 不好 - 對字串來說 eql? 與 == 作用一樣
@@ -1113,7 +1552,9 @@
   1.0.eql? x # 使用 eql? 區別 Fixnum 與 Float 的 1 很合理
   ```
 
-* 避免使用 Perl 風格的特別變數（像是 `$:` 、 `$;` 等等）。它們看起來非常神祕以及不鼓勵使用一行的腳本。使用函式庫 `English` 提供的可閱讀的別名。
+* <a name="no-cryptic-perlisms"></a>
+  避免使用 Perl 風格的特別變數（像是 `$:` 、 `$;` 等等）。它們看起來非常神祕以及不鼓勵使用一行的腳本。使用函式庫 `English` 提供的可閱讀的別名。
+<sup>[[link](#no-cryptic-perlisms)]</sup>
 
   ```Ruby
   # 不好
@@ -1124,7 +1565,9 @@
   $LOAD_PATH.unshift File.dirname(__FILE__)
   ```
 
-* 避免在方法名與左括號之間放一個空格。
+* <a name="parens-no-spaces"></a>
+  避免在方法名與左括號之間放一個空格。
+<sup>[[link](#parens-no-spaces)]</sup>
 
     ```Ruby
     # 不好
@@ -1134,11 +1577,44 @@
     f(3 + 2) + 1
     ```
 
-* 如果方法的第一個參數由左括號開始，永遠在這個方法呼叫裡使用括號。舉個例子，寫 `f((3+2) + 1)`。
+* <a name="always-warn-at-runtime"></a>
+  總是使用 `-w` 來執行 Ruby 直譯器，如果你忘了某個上述的規則，它就會警告你！
+<sup>[[link](#always-warn-at-runtime)]</sup>
 
-* 總是使用 `-w` 來執行 Ruby 直譯器，如果你忘了某個上述的規則，它就會警告你！
+* <a name="no-nested-methods"></a>
+  不要使用巢狀定義方法，使用 lambda 取代。
+  巢狀方法定義會在同一個範圍（例如 class）內實作出與外面相同的方法，而且， "巢狀方法" 在每一次呼叫包含定義的方法時都會重新定義。
+<sup>[[link](#no-nested-methods)]</sup>
 
-* 對單行區塊主體使用新的 lambda 字面語法，多行區塊使用 `lambda` 方法。
+  ```ruby
+  # 不好
+  def foo(x)
+    def bar(y)
+      # 主體省略
+    end
+
+    bar(x)
+  end
+
+  # 好 - 與上一個例子相同，但是每次呼叫 foo 並不會重新定義 bar
+  def bar(y)
+    # 主體省略
+  end
+
+  def foo(x)
+    bar(x)
+  end
+
+  # 也很好
+  def foo(x)
+    bar = ->(y) { ... }
+    bar.call(x)
+  end
+  ```
+
+* <a name="lambda-multi-line"></a>
+  對單行區塊主體使用新的 lambda 字面語法，多行區塊使用 `lambda` 方法。
+<sup>[[link](#lambda-multi-line)]</sup>
 
     ```Ruby
     # 不好
@@ -1161,7 +1637,33 @@
     end
     ```
 
-* 偏愛 `proc` 勝過 `Proc.new` 。
+* <a name="stabby-lambda-with-args"></a>
+  在定義 stabby lambda （使用 -> 箭頭符號）時別省略參數外的括號。
+<sup>[[link](#stabby-lambda-with-args)]</sup>
+
+  ```Ruby
+  # 不好
+  l = ->x, y { something(x, y) }
+
+  # 好
+  l = ->(x, y) { something(x, y) }
+  ```
+
+* <a name="stabby-lambda-no-args"></a>
+  在定義 stabby lambda （使用 -> 箭頭符號）時，如果沒有參數的話，省略括號。
+<sup>[[link](#stabby-lambda-no-args)]</sup>
+
+  ```Ruby
+  # 不好
+  l = ->() { something }
+
+  # 好
+  l = -> { something }
+  ```
+
+* <a name="proc"></a>
+  偏愛 `proc` 勝過 `Proc.new` 。
+<sup>[[link](#proc)]</sup>
 
   ```Ruby
   # 不好
@@ -1171,7 +1673,9 @@
   p = proc { |n| puts n }
   ```
 
-* 對 lambdas 與 procs ，偏愛 `proc.call()` 勝過 `proc[]` 或是 `proc.()` 。
+* <a name="proc-call"></a>
+  對 lambdas 與 procs ，偏愛 `proc.call()` 勝過 `proc[]` 或是 `proc.()` 。
+<sup>[[link](#proc-call)]</sup>
 
   ```Ruby
   # 不好 - 與列舉（Enumeration）的存取相似
@@ -1187,7 +1691,9 @@
   l.call(1)
   ```
 
-* 將沒有使用的區塊參數與區域變數加上前綴 `_` ，也可以只使用 `_` （雖然少了一點描述）。 Ruby 直譯器與工具像是 RuboCop 可以解析這個慣例，不會發出尚未使用變數的警告。
+* <a name="underscore-unused-vars"></a>
+  將沒有使用的區塊參數與區域變數加上前綴 `_` ，也可以只使用 `_` （雖然少了一點描述）。 Ruby 直譯器與工具像是 RuboCop 可以解析這個慣例，不會發出尚未使用變數的警告。
+<sup>[[link](#underscore-unused-vars)]</sup>
 
   ```Ruby
   # 不好
@@ -1215,13 +1721,19 @@
   end
   ```
 
-* 使用 `$stdout/$stderr/$stdin` 而不是
+* <a name="global-stdout"></a>
+  使用 `$stdout/$stderr/$stdin` 而不是
   `STDOUT/STDERR/STDIN` 。 `STDOUT/STDERR/STDIN` 是常數， 在Ruby中的確可以將常數重新賦值（也許是想重新導向到某個串流）
   ，但直譯器會發出警告。
+<sup>[[link](#global-stdout)]</sup>
 
-* 使用 `warn` 而不是 `$stderr.puts`。 除了比較清晰簡潔外， `warn` 允許停用警告（透過 `-W0` 設定警告級別為 0 ）。
+* <a name="warn"></a>
+  使用 `warn` 而不是 `$stderr.puts`。 除了比較清晰簡潔外， `warn` 允許停用警告（透過 `-W0` 設定警告級別為 0 ）。
+<sup>[[link](#warn)]</sup>
 
-* 偏愛使用 `sprintf` 與它的別名 `format`，而不是使用相當晦澀的 `String#%` 方法。
+* <a name="sprintf"></a>
+  偏愛使用 `sprintf` 與它的別名 `format`，而不是使用相當晦澀的 `String#%` 方法。
+<sup>[[link](#sprintf)]</sup>
 
   ```Ruby
   # 不好
@@ -1244,7 +1756,21 @@
   # => '20 10'
   ```
 
-* 偏愛使用 `Array#join` 而不是相當晦澀帶有字串參數的 `Array#*` 。
+* <a name="named-format-tokens"></a>
+  使用插值於格式化字串時，偏好使用 `%<name>s` 剩餘 `%{name}`，因為他帶有此數值類型的資訊。
+<sup>[[link]](#named-format-tokens)</sup>
+
+  ```ruby
+  # 不好
+  format('Hello, %{name}', name: 'John')
+
+  # 好
+  format('Hello, %<name>s', name: 'John')
+  ```
+
+* <a name="array-join"></a>
+  偏愛使用 `Array#join` 而不是相當晦澀帶有字串參數的 `Array#*` 。
+<sup>[[link](#array-join)]</sup>
 
     ```Ruby
     # 不好
@@ -1256,7 +1782,9 @@
     # => 'one, two, three'
     ```
 
-* 當想要使用作為陣列用途的變數，但並不確定它是否為陣列，利用 `[*var]` 或是 `Array()` 而不是直接進行 `Array` 檢查。
+* <a name="splat-arrays"></a>
+  當想要使用作為陣列用途的變數，但並不確定它是否為陣列，利用 `[*var]` 或是 `Array()` 而不是直接進行 `Array` 檢查。
+<sup>[[link](#splat-arrays)]</sup>
 
     ```Ruby
     # 不好
@@ -1270,7 +1798,9 @@
     Array(paths).each { |path| do_something(path) }
     ```
 
-* 當可以使用範圍或是 `Comparable#between?` 就別使用複雜的邏輯比較。
+* <a name="ranges-or-between"></a>
+  當可以使用範圍或是 `Comparable#between?` 就別使用複雜的邏輯比較。
+<sup>[[link](#ranges-or-between)]</sup>
 
   ```Ruby
   # 不好
@@ -1283,7 +1813,9 @@
   do_something if x.between?(1000, 2000)
   ```
 
-* 偏愛使用述語方法（predicate methods）與 `==` 做出明確的區別。可以接受數字比較。
+* <a name="predicate-methods"></a>
+  偏愛使用述語方法（predicate methods）與 `==` 做出明確的區別。可以接受數字比較。
+<sup>[[link](#predicate-methods)]</sup>
 
   ```Ruby
   # 不好
@@ -1313,7 +1845,9 @@
   end
   ```
 
-* 不使用明確的非- `nil` 檢查，除非是處理布林值。
+* <a name="no-non-nil-checks"></a>
+  不使用明確的非- `nil` 檢查，除非是處理布林值。
+<sup>[[link](#no-non-nil-checks)]</sup>
 
     ```ruby
     # 不好
@@ -1329,9 +1863,13 @@
     end
     ```
 
-* 避免使用 `BEGIN` 區塊。
+* <a name="no-BEGIN-blocks"></a>
+  避免使用 `BEGIN` 區塊。
+<sup>[[link](#no-BEGIN-blocks)]</sup>
 
-* 不要使用 `END` 區塊。使用 `Kernel#at_exit` 。
+* <a name="no-END-blocks"></a>
+  不要使用 `END` 區塊。使用 `Kernel#at_exit` 。
+<sup>[[link](#no-END-blocks)]</sup>
 
   ```ruby
   # 不好
@@ -1341,9 +1879,13 @@
   at_exit { puts 'Goodbye!' }
   ```
 
-* 避免使用範圍運算元（flip-flops）。
+* <a name="no-flip-flops"></a>
+  避免使用範圍運算元（flip-flops）。
+<sup>[[link](#no-flip-flops)]</sup>
 
-* 避免在流程控制中使用巢狀的條件。
+* <a name="no-nested-conditionals"></a>
+  避免在流程控制中使用巢狀的條件。
+<sup>[[link](#no-nested-conditionals)]</sup>
 
   當你能斷定無效的資料時，則偏好使用守衛語句（guard clause）。 守衛語句是在函式最上方的條件句，在必要的時候能夠盡快地脫離方法。
 
@@ -1386,9 +1928,13 @@
   end
   ```
 
-* 偏好 `map` 比 `collect` 好， `find` 比 `detect` 好， `select` 比 `find_all` 好， `reduce` 比 `inject` 好， `size` 比 `length` 好。這並非是硬性的需求;如果使用別名能增強可讀性，那就用吧。 押韻方法（rhyming methods）沿襲自 Smalltalk ，這在其他程式語言中並不常見。鼓勵使用 `select` 大於 `find_all` ，因為能夠很好的與 `reject` 放在一起，而且它的名字能夠解釋自己的作用。
+* <a name="map-find-select-reduce-size"></a>
+  偏好 `map` 比 `collect` 好， `find` 比 `detect` 好， `select` 比 `find_all` 好， `reduce` 比 `inject` 好， `size` 比 `length` 好。這並非是硬性的需求;如果使用別名能增強可讀性，那就用吧。 押韻方法（rhyming methods）沿襲自 Smalltalk ，這在其他程式語言中並不常見。鼓勵使用 `select` 大於 `find_all` ，因為能夠很好的與 `reject` 放在一起，而且它的名字能夠解釋自己的作用。
+<sup>[[link](#map-find-select-reduce-size)]</sup>
 
-* 不要使用 `count` 作為 `size` 的替代方案。除了 `Enumerable` 物件之外還有 `Array` ，都會遍歷整個集合來取得它的大小。
+* <a name="count-vs-size"></a>
+  不要使用 `count` 作為 `size` 的替代方案。除了 `Enumerable` 物件之外還有 `Array` ，都會遍歷整個集合來取得它的大小。
+<sup>[[link](#count-vs-size)]</sup>
 
   ```Ruby
   # 不好
@@ -1398,7 +1944,9 @@
   some_hash.size
   ```
 
-* 使用 `flat_map` 而不是 `map` + `flatten`。這不適用於深度大於兩層的陣列，舉例來說，如果 `users.first.songs == ['a', ['b','c']]` ，則使用 `map + flatten` 而不是 `flat_map`。`flat_map` 扁平化第一層的陣列，然而 `flatten` 所有情形都會進行扁平化。
+* <a name="flat-map"></a>
+  使用 `flat_map` 而不是 `map` + `flatten`。這不適用於深度大於兩層的陣列，舉例來說，如果 `users.first.songs == ['a', ['b','c']]` ，則使用 `map + flatten` 而不是 `flat_map`。`flat_map` 扁平化第一層的陣列，然而 `flatten` 所有情形都會進行扁平化。
+<sup>[[link](#flat-map)]</sup>
 
   ```Ruby
   # 不好
@@ -1408,7 +1956,9 @@
   all_songs = users.flat_map(&:songs).uniq
   ```
 
-* 使用 `reverse_each` 而不是 `reverse.each` 。 `reverse_each` 不會製造一個新的陣列作為分配用途，這樣很好。
+* <a name="reverse-each"></a>
+  使用 `reverse_each` 而不是 `reverse.each` 。 `reverse_each` 不會製造一個新的陣列作為分配用途，這樣很好。
+<sup>[[link](#reverse-each)]</sup>
 
   ```Ruby
   # 不好
@@ -1423,7 +1973,9 @@
 > 程式設計的真正難題是替事物命名及無效的快取。<br>
 > -- Phil Karlton
 
-* 識別字用英語命名。
+* <a name="english-identifiers"></a>
+  識別字用英語命名。
+<sup>[[link](#english-identifiers)]</sup>
 
   ```Ruby
   # 不好 - 識別字使用非 ASCII 字母
@@ -1436,7 +1988,9 @@
   salary = 1_000
   ```
 
-* 符號、方法與變數使用蛇底式小寫（snake_case）。
+* <a name="snake-case-symbols-methods-vars"></a>
+  符號、方法與變數使用蛇底式小寫（snake_case）。
+<sup>[[link](#snake-case-symbols-methods-vars)]</sup>
 
   ```Ruby
   # 不好
@@ -1457,44 +2011,89 @@
   # 好
   :some_symbol
 
+  some_var = 5
+  var10    = 10
+
   def some_method
     ...
   end
   ```
 
-* 類別與模組使用駝峰式大小寫（CamelCase）。（保留像是 HTTP、RFC、XML 這種縮寫為大寫）
+* <a name="snake-case-symbols-methods-vars-with-numbers"></a>
+  在命名符號、方法或變數時，不要分開字母跟數字。
+<sup>[[link](#snake-case-symbols-methods-vars-with-numbers)]</sup>
+
+  ```Ruby
+  # 不好
+  :some_sym_1
+
+  some_var_1 = 1
+
+  def some_method_1
+    # 一些程式碼
+  end
+
+  # 好
+  :some_sym1
+
+  some_var1 = 1
+
+  def some_method1
+    # 一些程式碼
+  end
+  ```
+
+* <a name="camelcase-classes"></a>
+  類別與模組使用駝峰式大小寫（CamelCase）。（保留像是 HTTP、RFC、XML 這種縮寫為大寫）
+<sup>[[link](#camelcase-classes)]</sup>
 
   ```Ruby
   # 不好
   class Someclass
-    ...
+    # 一些程式碼
   end
 
   class Some_Class
-    ...
+    # 一些程式碼
   end
 
   class SomeXml
-    ...
+    # 一些程式碼
+  end
+
+  class XmlSomething
+    # 一些程式碼
   end
 
   # 好
   class SomeClass
-    ...
+    # 一些程式碼
   end
 
   class SomeXML
-    ...
+    # 一些程式碼
+  end
+
+  class XMLSomething
+    # 一些程式碼
   end
   ```
 
-* 檔案命名使用蛇底式小寫（snake_case），例如： `hello_world.rb` 。
+* <a name="snake-case-files"></a>
+  檔案命名使用蛇底式小寫（snake_case），例如： `hello_world.rb` 。
+<sup>[[link](#snake-case-files)]</sup>
 
-* 資料夾命名亦使用蛇底式小寫（snake_case），例如： `lib/hello_world/hello_world.rb` 。
+* <a name="snake-case-dirs"></a>
+  資料夾命名亦使用蛇底式小寫（snake_case），例如： `lib/hello_world/hello_world.rb` 。
+<sup>[[link](#snake-case-dirs)]</sup>
 
-* 盡量讓每一個檔案內只有單一類別或模組。使用該類別或模組的名稱來替該檔案命名，但將名稱從駝峰式大小寫（CamelCase）置換成蛇底式小寫（snake_case）。
+* <a name="one-class-per-file"></a>
+  盡量讓每一個檔案內只有單一類別或模組。使用該類別或模組的名稱來替該檔案命名，但將名稱從駝峰式大小寫（CamelCase）置換成蛇底式小寫（snake_case）。
+<sup>[[link](#one-class-per-file)]</sup>
 
-* 其他常數使用尖叫蛇底式大寫（SCREAMING_SNAKE_CASE）。
+* <a name="screaming-snake-case"></a>
+  其他常數使用尖叫蛇底式大寫（SCREAMING_SNAKE_CASE）。
+<sup>[[link](#screaming-snake-case)]</sup>
 
   ```Ruby
   # 不好
@@ -1504,9 +2103,49 @@
   SOME_CONST = 5
   ```
 
-* 判斷式方法的名字（回傳布林值的方法）應以問號結尾。(即 `Array#empty?` )。非回傳布林值的方法，不應以問號結尾。
+* <a name="bool-methods-qmark"></a>
+  判斷式方法的名字（回傳布林值的方法）應以問號結尾。(即 `Array#empty?` )。非回傳布林值的方法，不應以問號結尾。
+<sup>[[link](#bool-methods-qmark)]</sup>
 
-* 有潛在“危險性”的方法，若此 *危險* 方法有安全版本存在時，應以安全版本名加上驚嘆號結尾（即：改動 `self` 或參數、 `exit!` 等等方法）。
+* <a name="bool-methods-prefix"></a> 
+  避免在使用動詞命名的判斷式加上前綴如 `is`、`does` 或是 `can`，這些前綴與 Ruby 核心函式庫內的判斷式如 `empty?` 和 `include?` 相較之下顯得多餘且邏輯不一致。
+<sup>[[link](#bool-methods-prefix)]</sup>
+
+  ```ruby
+  # 不好
+  class Person
+    def is_tall?
+      true
+    end
+
+    def can_play_basketball?
+      false
+    end
+
+    def does_like_candy?
+      true
+    end
+  end
+
+  # 好
+  class Person
+    def tall?
+      true
+    end
+
+    def basketball_player?
+      false
+    end
+
+    def likes_candy?
+      true
+    end
+  end
+  ```
+
+* <a name="dangerous-method-bang"></a>
+  有潛在“危險性”的方法，若此 *危險* 方法有安全版本存在時，應以安全版本名加上驚嘆號結尾（即：改動 `self` 或參數、 `exit!` 等等方法）。
+<sup>[[link](#dangerous-method-bang)]</sup>
 
   ```Ruby
   # 不好 - 沒有對應的安全方法
@@ -1531,7 +2170,9 @@
   end
   ```
 
-* 如果可能的話，從危險方法（bang）的角度來定義對應的安全方法（non-bang）。
+* <a name="safe-because-unsafe"></a>
+  如果可能的話，從危險方法（bang）的角度來定義對應的安全方法（non-bang）。
+<sup>[[link](#safe-because-unsafe)]</sup>
 
   ```Ruby
   class Array
@@ -1551,9 +2192,9 @@
   end
   ```
 
-* 在短的區塊使用 `reduce` 時，把參數命名為 `|a, e|` (累加器，元素)
-
-* 在定義二元操作符時，把參數命名為 `other` （`<<` 與 `[]` 是這條規則的例外，因為它們的語義不同）。
+* <a name="other-arg"></a>
+  在定義二元操作符時，把參數命名為 `other` （`<<` 與 `[]` 是這條規則的例外，因為它們的語義不同）。
+<sup>[[link](#other-arg)]</sup>
 
   ```Ruby
   def +(other)
@@ -1567,26 +2208,54 @@
 > "如何改善程式碼讓它不需要註解？" 改善程式碼然後記錄下來使它更簡潔。 <br>
 > -- Steve McConnell
 
-* 撰寫自我記錄的程式碼並忽略之後的小節。我是認真的！
-* 用英文寫註解。
-* 在註解的 `#` 與註解文字之間使用一個空格。
-* 比一個單字長的註解要大寫及使用標點符號。句號後使用[一個空格](http://en.wikipedia.org/wiki/Sentence_spacing)。
-* 避免多餘的註解
+* <a name="no-comments"></a>
+  撰寫自我記錄的程式碼並忽略之後的小節。我是認真的！
+<sup>[[link](#no-comments)]</sup>
+
+* <a name="english-comments"></a>
+  用英文寫註解。
+<sup>[[link](#english-comments)]</sup>
+
+* <a name="hash-space"></a>
+  在註解的 `#` 與註解文字之間使用一個空格。
+<sup>[[link](#hash-space)]</sup>
+
+* <a name="english-syntax"></a>
+  比一個單字長的註解要大寫及使用標點符號。句號後使用[一個空格](http://en.wikipedia.org/wiki/Sentence_spacing)。
+<sup>[[link](#english-syntax)]</sup>
+
+* <a name="no-superfluous-comments"></a>
+  避免多餘的註解
+<sup>[[link](#no-superfluous-comments)]</sup>
 
     ```Ruby
     # 不好
     counter += 1 # 把計數器加一
     ```
-* 保持現有的註解是最新的。過時的註解比沒有註解還差。
+* <a name="comment-upkeep"></a>
+  保持現有的註解是最新的。過時的註解比沒有註解還差。
+<sup>[[link](#comment-upkeep)]</sup>
+
 > 好的程式碼就像是好的笑話 -- 它不需要解釋<br>
 > -- Russ Olsen
-* 避免替爛程式碼寫註解。重構程式碼讓它們看起來一目了然。（要嘛就做，要嘛不做 ― 不要只是試試看。-- Yoda）
+
+* <a name="refactor-dont-comment"></a>
+  避免替爛程式碼寫註解。重構程式碼讓它們看起來一目了然。（要嘛就做，要嘛不做 ― 不要只是試試看。-- Yoda）
+<sup>[[link](#refactor-dont-comment)]</sup>
 
 ### 註釋
 
-* 註釋應該直接寫在相關程式碼那行之後。
-* 註釋關鍵字後方伴隨著一個冒號及空白，接著一個描述問題的記錄。
-* 如果需要用多行來描述問題，之後的行要放在 `#` 號後面並縮排兩個空白。
+* <a name="annotate-above"></a>
+  註釋應該直接寫在相關程式碼那行之後。
+<sup>[[link](#annotate-above)]</sup>
+
+* <a name="annotate-keywords"></a>
+  註釋關鍵字後方伴隨著一個冒號及空白，接著一個描述問題的記錄。
+<sup>[[link](#annotate-keywords)]</sup>
+
+* <a name="indent-annotations"></a>
+  如果需要用多行來描述問題，之後的行要放在 `#` 號後面並縮排兩個空白。
+<sup>[[link](#indent-annotations)]</sup>
 
     ```Ruby
     def bar
@@ -1595,29 +2264,127 @@
       baz(:quux)
     end
     ```
-* 在問題是顯而易見的情況下，任何的文件會是多餘的，註釋應該要留在可能有問題的那行。這個用法是例外而不是規則。
+* <a name="rare-eol-annotations"></a>
+  在問題是顯而易見的情況下，任何的文件會是多餘的，註釋應該要留在可能有問題的那行。這個用法是例外而不是規則。
+<sup>[[link](#rare-eol-annotations)]</sup>
 
     ```Ruby
     def bar
       sleep 100 # OPTIMIZE
     end
     ```
-* 使用 `TODO` 來標記之後應被加入的未實現功能或特色。
-* 使用 `FIXME` 來標記一個需要修復的程式碼。
-* 使用 `OPTIMIZE` 來標記可能影響效能的緩慢或效率低落的程式碼。
-* 使用 `HACK` 來標記代碼異味，其中包含了可疑的編碼實踐以及應該需要重構。
-* 使用 `REVIEW` 來標記任何需要審視及確認正常動作的地方。舉例來說：`REVIEW: 我們確定用戶現在是這麼做的嗎？`
-* 如果你覺得適當的話，使用其他你習慣的註釋關鍵字，但記得把它們記錄在專案的 `README` 或類似的地方。
+* <a name="todo"></a>
+  使用 `TODO` 來標記之後應被加入的未實現功能或特色。
+<sup>[[link](#todo)]</sup>
+
+* <a name="fixme"></a>
+  使用 `FIXME` 來標記一個需要修復的程式碼。
+<sup>[[link](#fixme)]</sup>
+
+* <a name="optimize"></a>
+  使用 `OPTIMIZE` 來標記可能影響效能的緩慢或效率低落的程式碼。
+<sup>[[link](#optimize)]</sup>
+
+* <a name="hack"></a>
+  使用 `HACK` 來標記代碼異味，其中包含了可疑的編碼實踐以及應該需要重構。
+<sup>[[link](#hack)]</sup>
+
+* <a name="review"></a>
+  使用 `REVIEW` 來標記任何需要審視及確認正常動作的地方。舉例來說：`REVIEW: 我們確定用戶現在是這麼做的嗎？`
+<sup>[[link](#review)]</sup>
+
+* <a name="document-annotations"></a>
+  如果你覺得適當的話，使用其他你習慣的註釋關鍵字，但記得把它們記錄在專案的 `README` 或類似的地方。
+<sup>[[link](#document-annotations)]</sup>
+
+### 魔法註解
+
+* <a name="magic-comments-first"></a>
+  在代碼或是文件的最上方加入魔法註解（除了 shebangs ，我們等等會討論到他）。
+<sup>[[link](#magic-comments-first)]</sup>
+
+  ```Ruby
+  # 好
+  # frozen_string_literal: true
+
+  # 有關 Person 的一些文件
+  class Person
+  end
+
+  # 不好
+  # 有關 Person 的一些文件
+
+  # frozen_string_literal: true
+  class Person
+  end
+  ```
+
+* <a name="below-shebang"></a>
+  當魔法註解與 shebangs 同時出現的話，將前者至於後者之後。
+<sup>[[link](#below-shebang)]</sup>
+
+  ```Ruby
+  # 好
+  #!/usr/bin/env ruby
+  # frozen_string_literal: true
+
+  App.parse(ARGV)
+
+  # 不好
+  # frozen_string_literal: true
+  #!/usr/bin/env ruby
+
+  App.parse(ARGV)
+  ```
+
+* <a name="one-magic-comment-per-line"></a>
+  你如果需要多個的話，使用一行一個魔法註解。
+<sup>[[link](#one-magic-comment-per-line)]</sup>
+
+  ```Ruby
+  # 好
+  # frozen_string_literal: true
+  # encoding: ascii-8bit
+
+  # 不好
+  # -*- frozen_string_literal: true; encoding: ascii-8bit -*-
+  ```
+
+* <a name="separate-magic-comments-from-code"></a>
+  使用一個空行分隔魔法註解與程式碼或是文件。
+<sup>[[link](#separate-magic-comments-from-code)]</sup>
+
+  ```Ruby
+  # 好
+  # frozen_string_literal: true
+
+  # 有關 Person 的一些文件
+  class Person
+    # Some code
+  end
+
+  # 不好
+  # frozen_string_literal: true
+  # 有關 Person 的一些文件
+  class Person
+    # Some code
+  end
+  ```
 
 ## 類別與模組
 
-* 在類別定義裡使用一致的結構。
+* <a name="consistent-classes"></a>
+  在類別定義裡使用一致的結構。
+<sup>[[link](#consistent-classes)]</sup>
 
     ```Ruby
     class Person
       # 首先是 extend 與 include
       extend SomeModule
       include AnotherModule
+
+      # 內部類別
+      CustomError = Class.new(StandardError)
 
       # 接著是常數
       SOME_CONSTANT = 20
@@ -1630,6 +2397,10 @@
 
       # 公開的類別方法接在下一行
       def self.some_method
+      end
+
+      # 初始化方法置於類別方法與其他實例方法之中
+      def initialize
       end
 
       # 跟著是公開的實體方法
@@ -1649,13 +2420,107 @@
     end
     ```
 
-* 偏好模組，勝過只有類別方法的類。類別應該只在產生實例是合理的時候使用。
+* <a name="mixin-grouping"></a>
+  引入多個 mixin 時分開聲明。
+<sup>[[link](#mixin-grouping)]</sup>
+
+  ```ruby
+  # 不好
+  class Person
+    include Foo, Bar
+  end
+
+  # 好
+  class Person
+    # 把多個 mixin 分開聲明
+    include Foo
+    include Bar
+  end
+  ```
+
+* <a name="file-classes"></a>
+  別在同一個類別中巢狀多個類別，試著在各別的類別檔案中分開包裝類別。
+<sup>[[link](#file-classes)]</sup>
+
+  ```Ruby
+  # 不好
+
+  # foo.rb
+  class Foo
+    class Bar
+      # 裡面有 30 個方法
+    end
+
+    class Car
+      # 裡面有 20 個方法
+    end
+
+    # 裡面有 30 個方法
+  end
+
+  # 好
+
+  # foo.rb
+  class Foo
+    # 裡面有 30 個方法
+  end
+
+  # foo/bar.rb
+  class Foo
+    class Bar
+      # 裡面有 30 個方法
+    end
+  end
+
+  # foo/car.rb
+  class Foo
+    class Car
+      # 裡面有 20 個方法
+    end
+  end
+  ```
+
+* <a name="namespace-definition"></a>
+  使用明確的巢狀定義（和重啟）命名類別和模組，因為 Ruby 的[詞法作用域（lexical scoping）](https://cirw.in/blog/constant-lookup.html)，使用範圍解析運算符（::）時，根據巢狀模組定義的方式，可能導致意料之外的常數查找。
+  <sup>[[link](#namespace-definition)]</sup>
+
+  ```Ruby
+  module Utilities
+    class Queue
+    end
+  end
+
+  # 不好
+  class Utilities::Store
+    Module.nesting # => [Utilities::Store]
+
+    def initialize
+      # 參考到最高層級 ::Queue 類別，因為 Utilities 並不在當前的巢狀鏈中
+      @queue = Queue.new
+    end
+  end
+
+  # 好
+  module Utilities
+    class WaitingList
+      Module.nesting # => [Utilities::WaitingList, Utilities]
+
+      def initialize
+        @queue = Queue.new # 參考 Utilities::Queue
+      end
+    end
+  end
+  ```
+
+* <a name="modules-vs-classes"></a>
+  偏好模組，勝過只有類別方法的類。類別應該只在產生實例是合理的時候使用。
+<sup>[[link](#modules-vs-classes)]</sup>
 
     ```Ruby
     # 差
     class SomeClass
       def self.some_method
-        # body omitted
+        # 主體省略
       end
 
       def self.some_other_method
@@ -1667,7 +2532,7 @@
       module_function
 
       def some_method
-        # body omitted
+        # 主體省略
       end
 
       def some_other_method
@@ -1675,7 +2540,9 @@
     end
     ```
 
-* 當你想將模組的實例方法變成類別方法時，偏愛使用 `module_function` 勝過 `extend self` 。
+* <a name="module-function"></a>
+  當你想將模組的實例方法變成類別方法時，偏愛使用 `module_function` 勝過 `extend self` 。
+<sup>[[link](#module-function)]</sup>
 
     ```Ruby
     # 差
@@ -1705,9 +2572,17 @@
     end
     ```
 
-* 當設計類別階層時，確認它們符合 [Liskov 代換原則](http://en.wikipedia.org/wiki/Liskov_substitution_principle)。
-* 盡可能讓你的類別越[堅固](http://en.wikipedia.org/wiki/SOLID_(object-oriented_design\))越好。
-* 永遠替類別提供一個適當的 `to_s` 方法來表示領域模型（domain model）。
+* <a name="liskov"></a>
+  當設計類別階層時，確認它們符合 [Liskov 代換原則](http://en.wikipedia.org/wiki/Liskov_substitution_principle)。
+<sup>[[link](#liskov)]</sup>
+
+* <a name="solid-design"></a>
+  盡可能讓你的類別越[堅固](http://en.wikipedia.org/wiki/SOLID_(object-oriented_design\))越好。
+<sup>[[link](#solid-design)]</sup>
+
+* <a name="define-to-s"></a>
+  永遠替類別提供一個適當的 `to_s` 方法來表示領域模型（domain model）。
+<sup>[[link](#define-to-s)]</sup>
 
     ```Ruby
     class Person
@@ -1719,12 +2594,14 @@
       end
 
       def to_s
-        "#{@first_name #@last_name"}
+        "#{@first_name} #{@last_name}"
       end
     end
     ```
 
-* 使用 `attr` 這類函數來定義瑣碎的 accessor 或 mutators。
+* <a name="attr_family"></a>
+  使用 `attr` 這類函數來定義瑣碎的 accessor 或 mutators。
+<sup>[[link](#attr_family)]</sup>
 
     ```Ruby
     # 不好
@@ -1754,7 +2631,51 @@
     end
     ```
 
-* 考慮使用 `Struct.new`，它替你定義了那些瑣碎的存取器（accessors），建構式（constructor）以及比較運算元（comparison operators）。
+* <a name="accessor_mutator_method_names"></a>
+  使用存取器（accessors）和修改器（mutators）時，避免在方法名稱前面加上 `get_` 與 `set_` 的前綴。在 Ruby 中，慣例上使用屬性名稱當作存取器（讀）和使用 `attr_name=` 當修改器（寫）。
+<sup>[[link](#accessor_mutator_method_names)]</sup>
+
+  ```ruby
+  # 不好
+  class Person
+    def get_name
+      "#{@first_name} #{@last_name}"
+    end
+
+    def set_name(name)
+      @first_name, @last_name = name.split(' ')
+    end
+  end
+
+  # 好
+  class Person
+    def name
+      "#{@first_name} #{@last_name}"
+    end
+
+    def name=(name)
+      @first_name, @last_name = name.split(' ')
+    end
+  end
+  ```
+
+* <a name="attr"></a>
+  避免使用 `attr`。 使用 `attr_reader` 和 `attr_accessor` 。
+<sup>[[link](#attr)]</sup>
+
+  ```Ruby
+  # 不好 - 產生一個屬性存取器 (Ruby 1.9 時已移除)
+  attr :something, true
+  attr :one, :two, :three # 與 attr_reader 作用相同
+
+  # 好
+  attr_accessor :something
+  attr_reader :one, :two, :three
+  ```
+
+* <a name="struct-new"></a>
+  考慮使用 `Struct.new`，它替你定義了那些瑣碎的存取器（accessors），建構式（constructor）以及比較運算元（comparison operators）。
+<sup>[[link](#struct-new)]</sup>
 
     ```Ruby
     # 好
@@ -1771,16 +2692,35 @@
     Person = Struct.new(:first_name, :last_name) do
     end
     ```
-* 考慮加入工廠方法來提供額外合理的方式，來創造一個特定類別的實體。
 
-    ```Ruby
-    class Person
-      def self.create(options_hash)
-        # 省略主體
-      end
+* <a name="no-extend-struct-new"></a>
+  別使用 `Struct.new` 擴展一個實例初始化，如果檔案引入太多次，在帶入多餘的類別來擴展可能也會同時來入了奇怪的錯誤。
+<sup>[[link](#no-extend-struct-new)]</sup>
+
+  ```Ruby
+  # 不好
+  class Person < Struct.new(:first_name, :last_name)
+  end
+
+  # 好
+  Person = Struct.new(:first_name, :last_name)
+  ```
+    
+* <a name="factory-methods"></a>
+  考慮加入工廠方法來提供額外合理的方式，來創造一個特定類別的實體。
+<sup>[[link](#factory-methods)]</sup>
+
+  ```Ruby
+  class Person
+    def self.create(options_hash)
+      # 主體省略
     end
-    ```
-* 偏好[鴨子類型](http://en.wikipedia.org/wiki/Duck_typing)勝於繼承。
+  end
+  ```
+
+* <a name="duck-typing"></a>
+  偏好[鴨子類型](http://en.wikipedia.org/wiki/Duck_typing)勝於繼承。
+<sup>[[link](#duck-typing)]</sup>
 
     ```Ruby
     # 不好
@@ -1817,7 +2757,9 @@
       end
     end
     ```
-* 由於繼承中 "討厭的" 行為，避免使用類別變數 (`@@`)。
+* <a name="no-class-vars"></a>
+  由於繼承中 "討厭的" 行為，避免使用類別變數 (`@@`)。
+<sup>[[link](#no-class-vars)]</sup>
 
     ```Ruby
     class Parent
@@ -1837,8 +2779,13 @@
 
     如同你所看到的，在類別階級中的所有類別其實都共享一個類別變數。應該通常偏好使用實體變數而不是類別變數。
 
-* 依據方法的目的用途指定適當的可視層級 (`private` ,`protected` )。別把所有方法都設為 `public` （方法的預設值）。我們現在是在寫 *Ruby* ，不是 *Python* 。
-* 將 `public`, `protected`, `private` 和被應用的方法定義保持一致的縮排。在上下各留一行，來強調在這些方法的特性（公有的、受保護的、私有的）。
+* <a name="visibility"></a>
+  依據方法的目的用途指定適當的可視層級 (`private` ,`protected` )。別把所有方法都設為 `public` （方法的預設值）。我們現在是在寫 *Ruby* ，不是 *Python* 。
+<sup>[[link](#visibility)]</sup>
+
+* <a name="indent-public-private-protected"></a>
+  將 `public`, `protected`, `private` 和被應用的方法定義保持一致的縮排。在上下各留一行，來強調在這些方法的特性（公有的、受保護的、私有的）。
+<sup>[[link](#indent-public-private-protected)]</sup>
 
     ```Ruby
     class SomeClass
@@ -1858,7 +2805,9 @@
     end
     ```
 
-* 使用 `def self.method` 來定義 singleton 方法。由於類別名稱不重複的關係，這使得代碼更容易重構。
+* <a name="def-self-class-methods"></a>
+  使用 `def self.method` 來定義 singleton 方法。由於類別名稱不重複的關係，這使得代碼更容易重構。
+<sup>[[link](#def-self-class-methods)]</sup>
 
     ```Ruby
     class TestClass
@@ -1886,19 +2835,134 @@
     end
     ```
 
+* <a name="alias-method-lexically"></a>
+  當要幫在同一個類別作用域（lexical class scope）的方法使用別名時，
+  比起使用 `self` 的解法，偏好使用 `alias` ，
+  它更加清楚的告訴使用者，除非明確聲明，否則你的別名不會被任何子類別修改，運行時亦同。
+<sup>[[link](#alias-method-lexically)]</sup>
+
+  ```ruby
+  class Westerner
+    def first_name
+      @names.first
+    end
+
+    alias given_name first_name
+  end
+  ```
+
+  由於 `alias` 如同 `def`，是個關鍵字，所以偏好無型態符號的參數（bareword arguments）勝過
+  符號或是字串，換個說法，使用 `alias foo bar` 而不是 `alias :foo :bar`。
+
+  同時注意 Ruby 如何處理別名和繼承：當別名被定義時，別名的參照已經決定了，而非動態發出。
+
+  ```ruby
+  class Fugitive < Westerner
+    def first_name
+      'Nobody'
+    end
+  end
+  ```
+
+  在這個例子裡 `Fugitive#given_name` 仍會呼叫 `Westerner#first_name` 方法，
+  而非 `Fugitive#first_name`. 想要複寫 `Fugitive#given_name` 的行為，你必須重新定義初始的類別。
+
+  ```ruby
+  class Fugitive < Westerner
+    def first_name
+      'Nobody'
+    end
+
+    alias given_name first_name
+  end
+  ```
+
+* <a name="alias-method"></a>
+  當別名使用在模組、類別或是運行中單例類別的方法時，使用 `alias_method` ，
+  在這些情境下，使用作用域中的 `alias` 將會使運行無法預期。
+<sup>[[link](#alias-method)]</sup>
+
+  ```Ruby
+  module Mononymous
+    def self.included(other)
+      other.class_eval { alias_method :full_name, :given_name }
+    end
+  end
+
+  class Sting < Westerner
+    include Mononymous
+  end
+  ```
+
+* <a name="class-and-self"></a>
+  當一個類別（或是模組）方法呼叫其他類似的方法時，隱藏開頭的 `self` 或是隱藏在 `.` 之後自己的名字。
+  這在服務類別（service classes）或是其他把類別當作函式使用的概念中常見，這樣的習慣會減少這種類別出現重複樣板。
+  <sup>[[link](#class-and-self)]</sup>
+
+  ```Ruby
+  class TestClass
+    # 不好 -- 類別重新命名或是方法變更時需要花更多功夫
+    def self.call(param1, param2)
+      TestClass.new(param1).call(param2)
+    end
+
+    # 不好 -- 過於詳細
+    def self.call(param1, param2)
+      self.new(param1).call(param2)
+    end
+
+    # 好
+    def self.call(param1, param2)
+      new(param1).call(param2)
+    end
+
+    # 其他方法...
+  end
+  ```
+
 ## 異常
 
-* 使用 `fail` 方法來捕捉異常。僅在捕捉到異常時使用 `raise` 並重新拋出異常（因為沒有失敗，所以顯式地拋出異常）
+* <a name="prefer-raise-over-fail"></a>
+  對於異常建議使用 `raise` 勝過 `fail`。
+  <sup>[[link](#prefer-raise-over-fail)]</sup>
 
-    ```Ruby
-    begin
-     fail 'Oops';
-    rescue => error
-      raise if error.message != 'Oops'
-    end
-    ```
+  ```Ruby
+  # bad
+  fail SomeException, 'message'
 
-* 永遠不要從 `ensure` 區塊返回。如果你顯式地從 `ensure` 區塊中的一個方法返回，那麼這方法會如同沒有異常般的返回。實際上，異常會被默默地丟掉。
+  # good
+  raise SomeException, 'message'
+  ```
+
+* <a name="no-explicit-runtimeerror"></a>
+  當使用兩個參數的 `raise` 時，別明確指出 `RuntimeError`。
+<sup>[[link](#no-explicit-runtimeerror)]</sup>
+
+  ```ruby
+  # 不好
+  raise RuntimeError, 'message'
+
+  # 好 - 單個參數預設為 RuntimeError
+  raise 'message'
+  ```
+
+* <a name="exception-class-messages"></a>
+  偏好提供給 `raise` 異常類別和訊息共兩個分開的參數，勝於直接給異常實例。
+<sup>[[link](#exception-class-messages)]</sup>
+
+  ```Ruby
+  # 不好
+  raise SomeException.new('message')
+  # 這邊是沒有辦法使用 `raise SomeException.new('message'), backtrace` 的.
+
+  # 好
+  raise SomeException, 'message'
+  # 與 `raise SomeException, 'message', backtrace` 一致.
+  ```
+
+* <a name="no-return-ensure"></a>
+  永遠不要從 `ensure` 區塊返回。如果你顯式地從 `ensure` 區塊中的一個方法返回，那麼這方法會如同沒有異常般的返回。實際上，異常會被默默地丟掉。
+<sup>[[link](#no-return-ensure)]</sup>
 
     ```Ruby
     def foo
@@ -1910,7 +2974,9 @@
     end
     ```
 
-* 盡可能使用隱式的 `begin` 區塊。
+* <a name="begin-implicit"></a>
+  盡可能使用隱式的 `begin` 區塊。
+<sup>[[link](#begin-implicit)]</sup>
 
     ```Ruby
     # 不好
@@ -1930,7 +2996,9 @@
     end
     ```
 
-* 透過 *contingency* 方法 (一個由 Avdi Grimm 創造的詞）來減少 `begin` 區塊的使用。
+* <a name="contingency-methods"></a>
+  透過 *contingency* 方法 (一個由 Avdi Grimm 創造的詞）來減少 `begin` 區塊的使用。
+<sup>[[link](#contingency-methods)]</sup>
 
     ```Ruby
     # 不好
@@ -1958,7 +3026,9 @@
     with_io_error_handling { something_else_that_might_fail }
     ```
 
-* 不要封鎖異常。
+* <a name="dont-hide-exceptions"></a>
+  不要封鎖異常。
+<sup>[[link](#dont-hide-exceptions)]</sup>
 
     ```Ruby
     begin
@@ -1971,14 +3041,25 @@
     do_something rescue nil
     ```
 
-* 避免在 modifier 形式裡使用 `rescue` 。
+* <a name="no-rescue-modifiers"></a>
+  避免以修飾符的形式使用 `rescue` 。
+<sup>[[link](#no-rescue-modifiers)]</sup>
 
     ```Ruby
-    # 差勁 - 這捕捉了所有的 StandardError 異常。
-    do_something rescue nil
+    # 不好 - 這會捕捉 StandardError 類別和其所有子孫類別
+    read_file rescue handle_error($!)
+
+    # 好 - 這只會捕捉 Errno::ENOENT 類別和其所有子孫類別
+    def foo
+      read_file
+    rescue Errno::ENOENT => ex
+      handle_error(ex)
+    end
     ```
 
-* 不要為了控制流程而使用異常。
+* <a name="no-exceptional-flows"></a>
+  不要為了控制流程而使用異常。
+<sup>[[link](#no-exceptional-flows)]</sup>
 
     ```Ruby
     # 不好
@@ -1996,12 +3077,14 @@
     end
     ```
 
-* 避免救援 `Exception` 類別。這會把信號困住，並呼叫 `exit`，導致你需要 `kill -9` 進程。
+* <a name="no-blind-rescues"></a>
+  避免救援 `Exception` 類別。這會困住信號與對 `exit` 的呼叫，導致你需要 `kill -9` 進程。
+<sup>[[link](#no-blind-rescues)]</sup>
 
     ```Ruby
     # 不好
     begin
-      # 呼叫 exit 及殺掉信號會被捕捉（除了 kill -9）
+      # 呼叫 exit 及 kill 信號會被捕捉（除了 kill -9）
       exit
     rescue Exception
       puts "you didn't really want to exit, right?"
@@ -2025,7 +3108,9 @@
     end
     ```
 
-* 把較具體的異常放在救援串連的較上層，不然它們永遠不會被救援。
+* <a name="exception-ordering"></a>
+  把較具體的異常放在救援串連的較上層，不然它們永遠不會被救援。
+<sup>[[link](#exception-ordering)]</sup>
 
     ```Ruby
     # 不好
@@ -2046,7 +3131,9 @@
       # 一些處理
     end
     ```
-* 在 ensure 區塊中釋放你程式的外部資源。
+* <a name="release-resources"></a>
+  在 ensure 區塊中釋放你程式的外部資源。
+<sup>[[link](#release-resources)]</sup>
 
     ```Ruby
     f = File.open('testfile')
@@ -2058,11 +3145,32 @@
       f.close unless f.nil?
     end
     ```
-* 偏愛使用標準函式庫的異常處理勝於導入新的異常類別。
+
+* <a name="auto-release-resources"></a>
+盡量使用可自動清理資源的取得方法。
+<sup>[[link](#auto-release-resources)]</sup>
+
+  ```ruby
+  # 不好 - 你需要明確關閉檔案描述符（file descriptor）
+  f = File.open('testfile')
+  # 檔案裡的一些動作
+  f.close
+
+  # 好 - 檔案描述符會自行關閉
+  File.open('testfile') do |f|
+    # 檔案裡的一些動作
+  end
+  ```
+
+* <a name="standard-exceptions"></a>
+  偏愛使用標準函式庫的異常處理勝於導入新的異常類別。
+<sup>[[link](#standard-exceptions)]</sup>
 
 ## 集合
 
-* 偏好陣列及雜湊的字面表示法（除非你需要給建構子傳入參數）。
+* <a name="literal-array-hash"></a>
+  偏好陣列及雜湊的字面表示法（除非你需要給建構子傳入參數）。
+<sup>[[link](#literal-array-hash)]</sup>
 
     ```Ruby
     # 不好
@@ -2071,12 +3179,14 @@
 
     # 好
     arr = []
+    arr = Array.new(10)
     hash = {}
+    hash = Hash.new(0)
     ```
 
-* Prefer `%w` to the literal array syntax when you need an array of
-words(non-empty strings without spaces and special characters in them).
-Apply this rule only to arrays with two or more elements.
+* <a name="percent-w"></a>
+  當陣列由兩個以上的字串組成，而且字串不包含空格及特別字元時，偏好使用 `%w` 創建陣列。
+<sup>[[link](#percent-w)]</sup>
 
     ```Ruby
     # 不好
@@ -2086,9 +3196,9 @@ Apply this rule only to arrays with two or more elements.
     STATES = %w(draft open closed)
     ```
 
-* Prefer `%i` to the literal array syntax when you need an array of
-symbols(and you don't need to maintain Ruby 1.9 compatibility). Apply
-this rule only to arrays with two or more elements.
+* <a name="percent-i"></a>
+  當陣列由兩個以上的 symbol 組成，而且你不需要維護 Ruby 1.9 兼容性時，偏好使用 `%i` 創建陣列。
+<sup>[[link](#percent-i)]</sup>
 
     ```Ruby
     # bad
@@ -2098,15 +3208,46 @@ this rule only to arrays with two or more elements.
     STATES = %i(draft open closed)
     ```
 
-* 避免在陣列中創造巨大的間隔。
+* <a name="no-trailing-array-commas"></a>
+  避免在 `Array` 或 `Hash` 的最後一個項目後使用逗號，特別是他們不是分行表示時。
+<sup>[[link](#no-trailing-array-commas)]</sup>
 
+  ```ruby
+  # 不好 - 易於移動、增加、移除項目，但仍不是好選擇
+  VALUES = [
+             1001,
+             2020,
+             3333,
+           ]
+
+  # 不好
+  VALUES = [1001, 2020, 3333, ]
+
+  # 好
+  VALUES = [1001, 2020, 3333]
+  ```
+
+* <a name="no-gappy-arrays"></a>
+  避免在陣列中創造巨大的間隔。
+<sup>[[link](#no-gappy-arrays)]</sup>
 
     ```Ruby
     arr = []
     arr[100] = 1 # 現在你有一個很多 nil 的陣列
     ```
-* 當處理獨一無二的元素時，使用 `Set` 來替代 `Array` 。`Set` 實現了不重複的無序數值集合。`Set` 是陣列直觀的內部操作功能與雜湊的快速存取的混合體。
-* 偏好用符號取代字串作為雜湊的鍵。
+
+* <a name="first-and-last"></a>
+  當需要取得陣列第一個或是最後一個元素時，偏好
+  使用 `first` 或 `last` 勝過 `[0]` 或 `[-1]`。
+<sup>[[link](#first-and-last)]</sup>
+
+* <a name="set-vs-array"></a>
+  當處理獨一無二的元素時，使用 `Set` 來替代 `Array` 。`Set` 實現了不重複的無序數值集合。`Set` 是陣列直觀的內部操作功能與雜湊的快速存取的混合體。
+<sup>[[link](#set-vs-array)]</sup>
+
+* <a name="symbols-as-keys"></a>
+  偏好用符號取代字串作為雜湊的鍵。
+<sup>[[link](#symbols-as-keys)]</sup>
 
     ```Ruby
     # 不好
@@ -2115,7 +3256,71 @@ this rule only to arrays with two or more elements.
     # 好
     hash = { one: 1, two: 2, three: 3 }
     ```
-* 在處理需要出現的雜湊鍵時，使用 `fetch` 。
+
+* <a name="no-mutable-keys"></a>
+  避免使用可變的物件作為鍵值。
+<sup>[[link](#no-mutable-keys)]</sup>
+
+* <a name="hash-literals"></a>
+  當你的 hash 鍵為符號時，使用雜湊的字面語法。
+<sup>[[link](#hash-literals)]</sup>
+
+    ```Ruby
+    # 不好
+    hash = { :one => 1, :two => 2, :three => 3 }
+
+    # 好
+    hash = { one: 1, two: 2, three: 3 }
+    ```
+
+* <a name="no-mixed-hash-syntaces"></a>
+  別在同一個雜湊表示中混用 Ruby 1.9 雜湊表示式和火箭表示式（=>）。
+  當你的鍵值不是符號時，他就是雜湊火箭表示式
+<sup>[[link](#no-mixed-hash-syntaces)]</sup>
+
+  ```Ruby
+  # 不好
+  { a: 1, 'b' => 2 }
+
+  # 好
+  { :a => 1, 'b' => 2 }
+  ```
+
+* <a name="hash-key"></a>
+  使用 `Hash#key?` 取代 `Hash#has_key?` 和
+  使用 `Hash#value?` 取代 `Hash#has_value?`。
+<sup>[[link](#hash-key)]</sup>
+
+  ```ruby
+  # 不好
+  hash.has_key?(:test)
+  hash.has_value?(value)
+
+  # 好
+  hash.key?(:test)
+  hash.value?(value)
+  ```
+
+* <a name="hash-each"></a>
+  使用 `Hash#each_key` 取代 `Hash#keys.each` 
+  和使用 `Hash#each_value` 取代 `Hash#values.each` 。
+<sup>[[link](#hash-each)]</sup>
+
+  ```ruby
+  # 不好
+  hash.keys.each { |k| p k }
+  hash.values.each { |v| p v }
+  hash.each { |k, _v| p k }
+  hash.each { |_k, v| p v }
+
+  # 好
+  hash.each_key { |k| p k }
+  hash.each_value { |v| p v }
+  ```
+
+* <a name="hash-fetch"></a>
+  在處理需要出現的雜湊鍵時，使用 `fetch` 。
+<sup>[[link](#hash-fetch)]</sup>
 
     ```Ruby
     heroes = { 蝙蝠俠: 'Bruce Wayne', 超人: 'Clark Kent' }
@@ -2127,46 +3332,124 @@ this rule only to arrays with two or more elements.
     heroes.fetch(:supermann)
     ```
 
-* 避免使用可變的物件作為鍵值。
-* 當你的 hash 鍵為符號時，使用雜湊的字面語法。
+* <a name="hash-fetch-defaults"></a>
+  透過 `Hash#fetch` 來引入雜湊的值，而非使用邏輯符。
+<sup>[[link](#hash-fetch-defaults)]</sup>
 
-    ```Ruby
+  ```Ruby
+  batman = { name: 'Bruce Wayne', is_evil: false }
+
+  # 不好 - 如果只使用 || 運算符與假值，我們不會得到預期的結果
+  batman[:is_evil] || true # => true
+
+  # 好 - fetch 與假值正常運作中
+  batman.fetch(:is_evil, true) # => false
+  ```
+
+* <a name="use-hash-blocks"></a>
+  如果程式碼需要求值，可能會導致副作用或是成本過高時，偏好使用程式區塊（block）取代 `Hash#fetch` 裡的預設值。
+  <sup>[[link](#use-hash-blocks)]</sup>
+
+  ```ruby
+  batman = { name: 'Bruce Wayne' }
+
+  # 不好 - 如果我們使用預設值，便急於對他求值
+  # 發生多次的話它將會拖慢程式
+  batman.fetch(:powers, obtain_batman_powers) # obtain_batman_powers 是個非常重量級的呼叫
+
+  # 好 - 程式區塊為惰性求值，他僅會在 KeyError 異常時作動
+  batman.fetch(:powers) { obtain_batman_powers }
+  ```
+
+* <a name="hash-values-at"></a>
+  當你需要從雜湊中連續檢索多個值時，使用`Hash#values_at`。
+<sup>[[link](#hash-values-at)]</sup>
+
+  ```ruby
+  # 不好
+  email = data['email']
+  username = data['nickname']
+
+  # 好
+  email, username = data.values_at('email', 'nickname')
+  ```
+
+
+* <a name="ordered-hashes"></a>
+  相信這個事實吧，Ruby 1.9 的雜湊是有序的。
+<sup>[[link](#ordered-hashes)]</sup>
+
+* <a name="no-modifying-collections"></a>
+  在遍歷一個集合時，不要改動它。
+<sup>[[link](#no-modifying-collections)]</sup>
+
+* <a name="accessing-elements-directly"></a>
+  當要取用集合的元素時，如有提供的話盡量使用讀取器的替代方法，避免直接使用 `[n]` 取用。
+  這可以讓你避免從 `nil` 上呼叫 `[]`。
+<sup>[[link](#accessing-elements-directly)]</sup>
+
+  ```ruby
+  # 不好
+  Regexp.last_match[1]
+
+  # 好
+  Regexp.last_match(1)
+  ```
+
+* <a name="provide-alternate-accessor-to-collections"></a>
+  要為一個集合提供存取器時，提供一個替代方法在存取時幫使用者檢查是否存取到 `nil`。
+<sup>[[link](#provide-alternate-accessor-to-collections)]</sup>
+
+  ```ruby
+  # 不好
+  def awesome_things
+    @awesome_things
+  end
+
+  # 好
+  def awesome_things(index = nil)
+    if index && @awesome_things
+      @awesome_things[index]
+    else
+      @awesome_things
+    end
+  end
+  ```
+  
+## 數字
+
+* <a name="integer-type-checking"></a>
+  使用 `Integer` 來檢查整數的類型，因為 `Fixnum` 的定義取決於平台，在 32 位元與 64 位元的機器上會回傳不同的結果。
+<sup>[[link](#integer-type-checking)]</sup>
+
+  ```ruby
+  timestamp = Time.now.to_i
+
+  # 不好
+  timestamp.is_a? Fixnum
+  timestamp.is_a? Bignum
+
+  # 好
+  timestamp.is_a? Integer
+  ```
+
+  * <a name="random-numbers"></a>
+    在生成隨機數時偏好使用範圍（ranges），而不是帶偏移量的整數，因為他明確的展現你的意圖，想像一下你真的在骰一個骰子。
+  <sup>[[link](#random-numbers)]</sup>
+
+    ```ruby
     # 不好
-    hash = { :one => 1, :two => 2, :three => 3 }
+    rand(6) + 1
 
     # 好
-    hash = { one: 1, two: 2, three: 3 }
+    rand(1..6)
     ```
-
-* Use `fetch` when dealing with hash keys that should be present.
-
-    ```Ruby
-    heroes = { batman: 'Bruce Wayne', superman: 'Clark Kent' }
-    # bad - if we make a mistake we might not spot it right away
-    heroes[:batman] # => "Bruce Wayne"
-    heroes[:supermann] # => nil
-
-    # good - fetch raises a KeyError making the problem obvious
-    heroes.fetch(:supermann)
-    ```
-* Use `fetch` with second argument to set a default value
-
-   ```Ruby
-   batman = { name: 'Bruce Wayne', is_evil: false }
-
-   # bad - if we just use || operator with falsy value we won't get the expected result
-   batman[:is_evil] || true # => true
-
-   # good - fetch work correctly with falsy values
-   batman.fetch(:is_evil, true) # => false
-   ```
-
-* 相信這個事實吧，Ruby 1.9 的雜湊是有序的。
-* 在遍歷一個集合時，不要改動它。
 
 ## 字串
 
-* 偏好字串插值 (interpolation)，而不是字串串接 (concatenation)。
+* <a name="string-interpolation"></a>
+  偏好字串插值 (interpolation)，而不是字串串接 (concatenation)。
+<sup>[[link](#string-interpolation)]</sup>
 
     ```Ruby
     # 不好
@@ -2174,24 +3457,61 @@ this rule only to arrays with two or more elements.
 
     # 好
     email_with_name = "#{user.name} <#{user.email}>"
+
+    # 好
+    email_with_name = format('%s <%s>', user.name, user.email)
     ```
 
-* 考慮替字串插值留白。這使插值在字串裡看起來更清楚。
+* <a name="consistent-string-literals"></a>
+  選擇一個統一的字串風格吧！在 Ruby 社群中有兩種普遍的方法，分別是預設使用單引號（選項一）跟預設使用雙引號（選項二）。
+<sup>[[link](#consistent-string-literals)]</sup>
 
-    ```Ruby
-    "#{ user.last_name }, #{ user.first_name }"
-    ```
-
-* 當你不需要插入特殊符號如 `\t`, `\n`, `'`, 等等時，偏好單引號的字串。
+  * **(選項一)** 當你不需要插入特殊符號如 `\t`, `\n`, `'`, 等等時，偏好單引號的字串。
 
     ```Ruby
     # 不好
     name = "Bozhidar"
 
+    name = 'De\'Andre'
+
     # 好
     name = 'Bozhidar'
+
+    name = "De'Andre"
     ```
-* 別忘了使用 `{}` 圍繞要被插入字串的實體與全域變數。
+
+  * **(選項二)** 偏好使用雙引號，除非你的字串內包含 `"` 或是你必須要避免跳脫字元。
+
+    ```Ruby
+    # 不好
+    name = 'Bozhidar'
+
+    sarcasm = "I \"like\" it."
+
+    # 好
+    name = "Bozhidar"
+
+    sarcasm = 'I "like" it.'
+    ```
+
+  在這個指南中，字串風格是採用前者。
+
+* <a name="no-character-literals"></a>
+  別用字元表示語法 `?x`，從 Ruby 1.9 之後他已經是多餘的，
+  `?x` 會被解譯成 `'x'`（內有一個字元的字串）。
+<sup>[[link](#no-character-literals)]</sup>
+
+  ```Ruby
+  # 不好
+  char = ?c
+
+  # 好
+  char = 'c'
+  ```
+
+* <a name="curlies-interpolate"></a>
+  別忘了使用 `{}` 圍繞要被插入字串的實體與全域變數。
+<sup>[[link](#curlies-interpolate)]</sup>
 
     ```Ruby
     class Person
@@ -2220,11 +3540,34 @@ this rule only to arrays with two or more elements.
     # 好
     puts "$global = #{$global}"
     ```
-* 當你需要建構龐大的資料區段（chunk）時，避免使用 `String#+` 。
+
+* <a name="no-to-s"></a>
+  別使用 `Object#to_s` 在字串的插入中，他會自動調用的。
+<sup>[[link](#no-to-s)]</sup>
+
+  ```Ruby
+  # 不好
+  message = "This is the #{result.to_s}."
+
+  # 好
+  message = "This is the #{result}."
+  ```
+
+* <a name="concat-strings"></a>
+  當你需要建構龐大的資料區段（chunk）時，避免使用 `String#+` 。
   使用 `String#<<` 來替代。字串串接在對的地方改變字串實體，並且永遠比 `String#+` 來得快，`String#+` 創造了一堆新的字串物件。
+<sup>[[link](#concat-strings)]</sup>
 
     ```Ruby
-    # 好也比較快
+    # 不好
+    html = ''
+    html += '<h1>Page title</h1>'
+
+    paragraphs.each do |paragraph|
+      html += "<p>#{paragraph}</p>"
+    end
+
+    # 好又快
     html = ''
     html << '<h1>Page title</h1>'
 
@@ -2233,47 +3576,201 @@ this rule only to arrays with two or more elements.
     end
     ```
 
+* <a name="dont-abuse-gsub"></a>
+  如果你有更好更快的選擇，別使用 `String#gsub`。
+<sup>[[link](#dont-abuse-gsub)]</sup>
+
+    ```ruby
+    url = 'http://example.com'
+    str = 'lisp-case-rules'
+
+    # 不好
+    url.gsub('http://', 'https://')
+    str.gsub('-', '_')
+
+    # 好
+    url.sub('http://', 'https://')
+    str.tr('-', '_')
+    ```
+
+* <a name="heredocs"></a>
+  當使用多行字串的 heredocs 時，請記得他們保留空白字符的事實，
+  使用一些修剪空白的邊距是很好的做法。 
+<sup>[[link](#heredocs)]</sup>
+
+  ```ruby
+  code = <<-END.gsub(/^\s+\|/, '')
+    |def test
+    |  some_method
+    |  other_method
+    |end
+  END
+  # => "def test\n  some_method\n  other_method\nend\n"
+  ```
+
+* <a name="squiggly-heredocs"></a>
+  使用 Ruby 2.3 新增的`<<~` 操作符來縮排 heredocs 中的多行文本。
+<sup>[[link](#squiggly-heredocs)]</sup>
+
+  ```Ruby
+  # 差 — 使用 Powerpack 專案的 String#strip_margin
+  code = <<-RUBY.strip_margin('|')
+    |def test
+    |  some_method
+    |  other_method
+    |end
+  RUBY
+
+  # 差
+  code = <<-RUBY
+  def test
+    some_method
+    other_method
+  end
+  RUBY
+
+  # 好
+  code = <<~RUBY
+    def test
+      some_method
+      other_method
+    end
+  RUBY
+  ```
+
+* <a name="heredoc-delimiters"></a>
+  為 heredocs 使用描述性分隔符並且添加有關 heredoc 內容的信息，
+  附帶的好處是，如果使用正確的分隔符，某些編輯器可以突出顯示 heredocs 中的程式碼。
+<sup>[[link](#heredoc-delimiters)]</sup>
+
+  ```Ruby
+  # 不好
+  code = <<~END
+    def foo
+      bar
+    end
+  END
+
+  # 好
+  code = <<~RUBY
+    def foo
+      bar
+    end
+  RUBY
+
+  # 好
+  code = <<~SUMMARY
+    An imposing black structure provides a connection between the past and
+    the future in this enigmatic adaptation of a short story by revered
+    sci-fi author Arthur C. Clarke.
+  SUMMARY
+  ```
+
+## 日期與時間
+
+* <a name="time-now"></a>
+  當需要現在系統時間時，偏好使用 `Time.now` 勝於 `Time.new` 。 
+<sup>[[link](#time-now)]</sup>
+
+* <a name="no-datetime"></a>
+  除非你的計算需要考慮歷史上的曆法變革，否則避免使用 `DateTime` 。但如果你使用了，請確實設置 `start` 參數來清楚描述你的意圖。
+<sup>[[link](#no-datetime)]</sup>
+
+  ```Ruby
+  # 不好 - 對於現在時間使用 DateTime
+  DateTime.now
+
+  # 好 - 對於現在時間使用 Time
+  Time.now
+
+  # 不好 - 對於近代日期使用 DateTime
+  DateTime.iso8601('2016-06-29')
+
+  # 好 - 對於近代日期使用 Date
+  Date.iso8601('2016-06-29')
+
+  # 好 - 對於歷史日期使用 DateTime 且明確定義 start 參數為 ENGLAND 曆法
+  DateTime.iso8601('1751-04-23', Date::ENGLAND)
+  ```
+
 ## 正規表示法
 
 > 有些人在面對問題時，不經大腦便認為，「我知道，這裡該用正規表示法」。現在問題反倒變成兩個了。<br>
 > -- Jamie Zawinski
 
-* 如果你只需要在字串中簡單的搜索文字，不要使用正規表示法：`string['text']`
-* 針對簡單的字串查詢，你可以直接在字串索引中直接使用正規表示法。
+* <a name="no-regexp-for-plaintext"></a>
+  如果你只需要在字串中簡單的搜索文字，不要使用正規表示法：`string['text']`
+<sup>[[link](#no-regexp-for-plaintext)]</sup>
+
+* <a name="regexp-string-index"></a>
+  針對簡單的字串查詢，你可以直接在字串索引中直接使用正規表示法。
+<sup>[[link](#regexp-string-index)]</sup>
 
     ```Ruby
     match = string[/regexp/]             # 獲得匹配正規表示法的內容
     first_group = string[/text(grp)/, 1] # 或得分組的內容
     string[/text (grp)/, 1] = 'replace'  # string => 'text replace'
     ```
-* 當你不需要替結果分組時，使用非分組的群組。
-
-    ```Ruby
-    /(first|second)/   # 不好
-    /(?:first|second)/ # 好
-    ```
-* 避免使用 `$1-9`，因為它們很難追蹤它們包含什麼。可以使用命名群組來替代。
+* <a name="non-capturing-regexp"></a>
+  當你不需要替結果分組時，使用非分組的群組。
+<sup>[[link](#non-capturing-regexp)]</sup>
 
     ```Ruby
     # 不好
+    /(first|second)/   
+
+    # 好
+    /(?:first|second)/
+    ```
+
+* <a name="no-perl-regexp-last-matchers"></a>
+  別用難以理解的老式 Perl 變數來表示最後的正規表示式匹配值（像是 `$1`、`$2` 等等)，使用 `Regexp.last_match(n)` 取代。
+<sup>[[link](#no-perl-regexp-last-matchers)]</sup>
+
+
+    ```Ruby
     /(regexp)/ =~ string
     ...
+
+    # 不好
     process $1
 
     # 好
-    /(?<meaningful_var>regexp)/ =~ string
-    ...
-    process meaningful_var
+    process Regexp.last_match(1)
     ```
-* 字元類別只有幾個你需要關心的特殊字元：`^`, `-`, `\`, `]`，所以你不用逃脫字元 `.` 或在 `[]` 的中括號。
-* 小心使用 `^` 與 `$` ，它們匹配的是一行的開始與結束，不是字串的開始與結束。如果你想要匹配整個字串，使用 `\A` 與 `\z`。(譯註：`\Z` 實為 `/\n?\z/`，使用 `\z` 才能匹配到有含新行的字串的結束)
+
+* <a name="no-numbered-regexes"></a>
+  避免使用編號群組，因為它們很難追蹤它們包含什麼。可以使用命名群組來替代。
+<sup>[[link](#no-numbered-regexes)]</sup>
+
+  ```Ruby
+  # 不好
+  /(regexp)/ =~ string
+  # 一些程式碼
+  process Regexp.last_match(1)
+
+  # 好
+  /(?<meaningful_var>regexp)/ =~ string
+  # 一些程式碼
+  process meaningful_var
+  ```
+  
+* <a name="limit-escapes"></a>
+  字元類別只有幾個你需要關心的特殊字元：`^`, `-`, `\`, `]`，所以你不用逃脫字元 `.` 或在 `[]` 的中括號。
+<sup>[[link](#limit-escapes)]</sup>
+
+* <a name="caret-and-dollar-regexp"></a>
+  小心使用 `^` 與 `$` ，它們匹配的是一行的開始與結束，不是字串的開始與結束。如果你想要匹配整個字串，使用 `\A` 與 `\z`。(譯註：`\Z` 實為 `/\n?\z/`，使用 `\z` 才能匹配到有含新行的字串的結束)
+<sup>[[link](#caret-and-dollar-regexp)]</sup>
 
     ```Ruby
     string = "some injection\nusername"
     string[/^username$/]   # 匹配
     string[/\Ausername\z/] # 無匹配
     ```
-* 針對複雜的正規表示法，使用 `x` 修飾符。這讓它們的可讀性更高並且你可以加入有用的註解。只是要小心忽略的空白。
+* <a name="comment-regexes"></a>
+  針對複雜的正規表示法，使用 `x` 修飾符。這讓它們的可讀性更高並且你可以加入有用的註解。只是要小心忽略的空白。
+<sup>[[link](#comment-regexes)]</sup>
 
     ```Ruby
     regexp = %r{
@@ -2285,11 +3782,21 @@ this rule only to arrays with two or more elements.
     }x
     ```
 
-* 針對複雜的替換，`sub` 或 `gsub` 可以與區塊或雜湊來使用。
+* <a name="gsub-blocks"></a>
+  針對複雜的替換，`sub` 或 `gsub` 可以與區塊或雜湊來使用。
+<sup>[[link](#gsub-blocks)]</sup>
+
+  ```Ruby
+  words = 'foo bar'
+  words.sub(/f/, 'f' => 'F') # => 'Foo bar'
+  words.gsub(/\w+/) { |word| word.capitalize } # => 'Foo Bar'
+  ```
 
 ## 百分比字面
 
-* 使用 `%()` 給需要插值與嵌入雙引號的單行字串。多行字串，偏好使用 heredocs 。
+* <a name="percent-q-shorthand"></a>
+  使用 `%()`（比 `%Q` 還短) 給需要插值與嵌入雙引號的單行字串。多行字串，偏好使用 heredocs 。
+<sup>[[link](#percent-q-shorthand)]</sup>
 
     ```Ruby
     # 不好（不需要插值）
@@ -2307,29 +3814,101 @@ this rule only to arrays with two or more elements.
     # 好（需要插值、有雙引號以及單行）
     %(<tr><td class="name">#{name}</td>)
     ```
-* 正規表示法要匹配多於一個的 `/` 字元時，使用 `%r`。
+
+* <a name="percent-q"></a>
+  避免使用 `%()` 或是 `%q()` 除非你的的字串中同時擁有 `'` 與
+  `"`。偏好可讀性高的一般字串表示法，除非其中有太多跳脫字元。
+<sup>[[link](#percent-q)]</sup>
 
     ```Ruby
     # 不好
-    %r(\s+)
-
-    # 仍不好
-    %r(^/(.*)$)
-    # 應當是 /^\/(.*)$/
+    name = %q(Bruce Wayne)
+    time = %q(8 o'clock)
+    question = %q("What did you say?")
 
     # 好
-    %r(^/blog/2011/(.*)$)
+    name = 'Bruce Wayne'
+    time = "8 o'clock"
+    question = '"What did you say?"'
+    quote = %q(<p class='quote'>"What did you say?"</p>)
     ```
-* 避免 `%q`, `%Q`, `%x`, `%s` 以及 `%W`。
-* 偏好 `()` 作為所有 `%` 字面的分隔符。
+
+* <a name="percent-r"></a>
+  正規表示法要匹配多於一個的 `/` 字元時，使用 `%r`。
+<sup>[[link](#percent-r)]</sup>
+
+    ```Ruby
+    # 不好
+    %r{\s+}
+
+    # 好
+    %r{^/(.*)$}
+    %r{^/blog/2011/(.*)$}
+    ```
+
+* <a name="percent-x"></a>
+  避免使用 `%x` 除非你要調用帶有 `` ` `` 的指令（這不太可能）。
+<sup>[[link](#percent-x)]</sup>
+
+  ```Ruby
+  # 不好
+  date = %x(date)
+
+  # 好
+  date = `date`
+  echo = %x(echo `date`)
+  ```
+
+* <a name="percent-s"></a>
+  避免使用 `%s`，社群似乎一致認同 `:"some string"` 是建立有空格符號的最佳解。
+<sup>[[link](#percent-s)]</sup>
+
+* <a name="percent-literal-braces"></a>
+  偏好 `()` 作為各種 `%` 字面的最佳分隔符。
+  <sup>[[link](#percent-literal-braces)]</sup>
+  - `()` 用於字串的字面表示（`%q`, `%Q`）。
+  - `[]` 用於陣列的字面表示（`%w`, `%i`, `%W`, `%I`）如同一般陣列一樣對齊。
+  - `{}` 用於正規表示式（`%r`），因為括號（`()`）在正規表示式中經常出現，因此使用少見的 `{` 在 `%r` 中是最好的選擇。
+  - `()` 用於其他的字面表示（像是 `%s`, `%x`）。
+
+  ```Ruby
+  # 不好
+  %q{"Test's king!", John said.}
+
+  # 好
+  %q("Test's king!", John said.)
+
+  # 不好
+  %w(one two three)
+  %i(one two three)
+
+  # 好
+  %w[one two three]
+  %i[one two three]
+
+  # 不好
+  %r((\w+)-(\d+))
+  %r{\w{1,2}\d{2,5}}
+
+  # 好
+  %r{(\w+)-(\d+)}
+  %r|\w{1,2}\d{2,5}|
+  ```
 
 ## 元程式設計
 
-* 避免無謂的元程式設計。
+* <a name="no-needless-metaprogramming"></a>
+  避免無謂的元程式設計。
+<sup>[[link](#no-needless-metaprogramming)]</sup>
 
-* 寫一個函式庫時不要在核心類別搗亂（不要替它們加 monkey patch。）
+* <a name="no-monkey-patching"></a>
+  寫一個函式庫時不要在核心類別搗亂（不要替它們加 monkey patch。）
+<sup>[[link](#no-monkey-patching)]</sup>
 
-* 偏好區塊形式的 `class_eval` 勝於字串插值 (string-interpolated)的形式。
+* <a name="block-class-eval"></a>
+  偏好區塊形式的 `class_eval` 勝於字串插值 (string-interpolated)的形式。
+<sup>[[link](#block-class-eval)]</sup>
+
   - 當你使用字串插值形式時，總是提供 `__FILE__` 及 `__LINE__`，使你的 backtrace 看起來有意義：
 
     ```ruby
@@ -2338,7 +3917,9 @@ this rule only to arrays with two or more elements.
 
   - 偏好 `define_method` 勝於 `class_eval{ def ... }`
 
-* 當使用 `class_eval` （或其它的 `eval`）搭配字串插值時，添加一個註解區塊，來顯示如果做了插值的樣子（我從 Rails 程式碼學來的一個實踐）：
+* <a name="eval-comment-docs"></a>
+  當使用 `class_eval` （或其它的 `eval`）搭配字串插值時，添加一個註解區塊，來顯示如果做了插值的樣子（我從 Rails 程式碼學來的一個實踐）：
+<sup>[[link](#eval-comment-docs)]</sup>
 
     ```ruby
     # 從 activesupport/lib/active_support/core_ext/string/output_safety.rb
@@ -2357,7 +3938,11 @@ this rule only to arrays with two or more elements.
       end
     end
     ```
-* 元程式設計避免使用 `method_missing`。會讓 Backtraces 變得很凌亂；行為沒有列在 `#methods` 裡；拼錯的方法呼叫可能默默的工作（`nukes.launch_state = false`)。考慮使用 delegation, proxy, 或是 `define_method` 來取代。如果你必須使用 `method_missing`，
+
+* <a name="no-method-missing"></a>
+  元程式設計避免使用 `method_missing`。會讓 Backtraces 變得很凌亂；行為沒有列在 `#methods` 裡；拼錯的方法呼叫可能默默的工作（`nukes.launch_state = false`)。考慮使用 delegation, proxy, 或是 `define_method` 來取代。如果你必須使用 `method_missing`，
+<sup>[[link](#no-method-missing)]</sup>
+
   - 確保[也定義了 `respond_to_missing?`](http://blog.marc-andre.ca/2010/11/methodmissing-politely.html)
   - 僅捕捉字首定義良好的方法，像是 `find_by_*` ― 讓你的程式碼愈肯定(assertive)愈好。
   - 在最後的敘述句(statement)呼叫 `super`
@@ -2385,14 +3970,88 @@ this rule only to arrays with two or more elements.
     # 而最好是在每個可找到的屬性被宣告時，使用 define_method。
     ```
 
+* <a name="prefer-public-send"></a>
+  偏好使用 `public_send` 更勝於 `send`，如此一來可以避開 `private`/`protected` 的洩漏。
+<sup>[[link](#prefer-public-send)]</sup>
+
+  ```Ruby
+  # 我們有一個包含 Activatable 模組的 ActiveModel Organization
+  module Activatable
+    extend ActiveSupport::Concern
+
+    included do
+      before_create :create_token
+    end
+
+    private
+
+    def reset_token
+      # 一些程式碼
+    end
+
+    def create_token
+      # 一些程式碼
+    end
+
+    def activate!
+      # 一些程式碼
+    end
+  end
+
+  class Organization < ActiveRecord::Base
+    include Activatable
+  end
+
+  linux_organization = Organization.find(...)
+  # 不好 - 私有方法被使用
+  linux_organization.send(:reset_token)
+  # 好 - 會拋出例外
+  linux_organization.public_send(:reset_token)
+  ```
+
+* <a name="prefer-__send__"></a>
+  偏好 `__send__` 勝於 `send`，後者可能會與現有方法重疊。
+<sup>[[link](#prefer-__send__)]</sup>
+
+  ```Ruby
+  require 'socket'
+
+  u1 = UDPSocket.new
+  u1.bind('127.0.0.1', 4913)
+  u2 = UDPSocket.new
+  u2.connect('127.0.0.1', 4913)
+  # 並不會傳遞訊息給接收器物件
+  # 取而代之的是他會經由 UDP socket 傳遞訊息
+  u2.send :sleep, 0
+  # 以下的方法才會確實的傳遞訊息給接收器物件
+  u2.__send__ ...
+  ```
+
 ## 其它
 
-* `ruby -w` 寫出安全的程式碼。
-* 避免使用雜湊作為選擇性參數。這個方法是不是做太多事情了？（物件初始器是本規則的例外）
-* 避免方法長於 10 行程式碼（LOC）。理想上，大部分的方法會小於5行。空行不算進 LOC 裡。
-* 避免參數列表長於三或四個參數。
-* 如果你真的需要全域方法，把它們加入到 Kernel 並設為私有的。
-* 使用模組變數取代全域變數。
+* <a name="always-warn"></a>
+  `ruby -w` 寫出安全的程式碼。
+<sup>[[link](#always-warn)]</sup>
+
+* <a name="no-optional-hash-params"></a>
+  避免使用雜湊作為選擇性參數。這個方法是不是做太多事情了？（物件初始器是本規則的例外）
+<sup>[[link](#no-optional-hash-params)]</sup>
+
+* <a name="short-methods"></a>
+  避免方法長於 10 行程式碼（LOC）。理想上，大部分的方法會小於5行。空行不算進 LOC 裡。
+<sup>[[link](#short-methods)]</sup>
+
+* <a name="too-many-params"></a>
+  避免參數列表長於三或四個參數。
+<sup>[[link](#too-many-params)]</sup>
+
+* <a name="private-global-methods"></a>
+  如果你真的需要全域方法，把它們加入到 Kernel 並設為私有的。
+<sup>[[link](#private-global-methods)]</sup>
+
+* <a name="instance-vars"></a>
+  使用模組變數取代全域變數。
+<sup>[[link](#instance-vars)]</sup>
 
     ```Ruby
     # 不好
@@ -2408,13 +4067,29 @@ this rule only to arrays with two or more elements.
     Foo.bar = 1
     ```
 
-* 當 `alias_method` 可以做到時，避免使用 `alias` 。
-* 使用 `OptionParser` 來解析複雜的命令行選項及 `ruby -s` 來處理瑣碎的命令行選項。
-* 用函數式的方法寫程式，在有意義的情況下避免賦值。
-* 不要變動參數，除非那是方法的目的。
-* 避免超過三行的巢狀區塊。
-* 保持一致性。在理想的世界裡，遵循這些準則。
-* 使用常識。
+* <a name="optionparser"></a>
+  使用 `OptionParser` 來解析複雜的命令行選項及 `ruby -s` 來處理瑣碎的命令行選項。
+<sup>[[link](#optionparser)]</sup>
+
+* <a name="functional-code"></a>
+  用函數式的方法寫程式，在有意義的情況下避免賦值。
+<sup>[[link](#functional-code)]</sup>
+
+* <a name="no-param-mutations"></a>
+  不要變動參數，除非那是方法的目的。
+<sup>[[link](#no-param-mutations)]</sup>
+
+* <a name="three-is-the-number-thou-shalt-count"></a>
+  避免超過三行的巢狀區塊。
+<sup>[[link](#three-is-the-number-thou-shalt-count)]</sup>
+
+* <a name="be-consistent"></a>
+  保持一致性。在理想的世界裡，遵循這些準則。
+<sup>[[link](#be-consistent)]</sup>
+
+* <a name="common-sense"></a>
+  使用常識。
+<sup>[[link](#common-sense)]</sup>
 
 ## 工具
 
@@ -2422,22 +4097,29 @@ this rule only to arrays with two or more elements.
 
 ### RuboCop
 
-[RuboCop](https://github.com/bbatsov/rubocop) is a Ruby code style
-checker based on this style guide. RuboCop already covers a
-significant portion of the Guide, supports both MRI 1.9 and MRI 2.0
-and has good Emacs integration.
+[RuboCop](https://github.com/bbatsov/rubocop) 是一個基於本指南的 Ruby 語言風格檢查器，幾乎包含了此指南重要的部分，支援 MRI 1.9、MRI 2.0 還有良好的 Emacs 協作。
 
 ### RubyMine
 
-[RubyMine](http://www.jetbrains.com/ruby/)'s code inspections are
-[partially based](http://confluence.jetbrains.com/display/RUBYDEV/RubyMine+Inspections)
-on this guide.
+[RubyMine](http://www.jetbrains.com/ruby/)的程式碼檢查[部分基於](http://confluence.jetbrains.com/display/RUBYDEV/RubyMine+Inspections)本指南。
 
 # 貢獻
+
+本指南仍處於不斷更新的狀態 &mdash; 有些規則缺乏範例、有些規則則是缺乏清楚的例子來說明他，協助改進這些規則是一個很好（同時也簡單）的方法來幫助 Ruby 社群。
+
+時機成熟時，（希望）這些問題將會被解決 &mdash; 記著吧！
 
 在本指南所寫的每個東西都不是定案。這只是我渴望想與同樣對 Ruby 程式設計風格有興趣的大家一起工作，以致於最終我們可以替整個 Ruby 社群創造一個有益的資源。
 
 歡迎開票或發送一個帶有改進的更新請求。在此提前感謝你的幫助！
+
+你同時也可以透過[Gratipay](https://gratipay.com/~bbatsov/)來為本指南（還有 RuboCop）提供一些財務上的貢獻。
+
+[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.3.0/dist/gratipay.png)](https://gratipay.com/~bbatsov/)
+
+## 如何貢獻？
+
+真的很簡單，只要照著[貢獻指南](https://github.com/bbatsov/ruby-style-guide/blob/master/CONTRIBUTING.md)即可。
 
 # 授權
 
